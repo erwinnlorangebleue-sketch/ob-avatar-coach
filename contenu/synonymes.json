@@ -1,0 +1,13 @@
+{
+  "_mode_d_emploi": "Une ligne = un concept. À gauche, le mot du centre d'aide (tel qu'il apparaît dans les titres). À droite, ce que les coachs tapent vraiment. Les accents et majuscules ne comptent pas. Les clés qui commencent par _ sont ignorées.",
+  "résiliation": ["il veut arrêter", "veut arrêter", "arrêter son abonnement", "arrêter l'abonnement", "quitter la salle", "se désinscrire", "désabonner", "annuler son abonnement", "résilier", "partir de la salle"],
+  "impayé relance": ["il n'a pas payé", "pas payé", "prélèvement rejeté", "rejet de prélèvement", "il doit de l'argent", "dette"],
+  "remboursement": ["rembourser", "rendre l'argent", "trop payé", "payé deux fois"],
+  "carte de remplacement": ["badge perdu", "carte perdue", "perdu sa carte", "perdu son badge", "nouveau badge", "badge cassé"],
+  "réabonner": ["renouveler son abonnement", "reprendre un abonnement", "il revient", "revient à la salle"],
+  "séance d'essai": ["venir tester", "essayer la salle", "séance découverte", "séance gratuite"],
+  "clôture caisse": ["fermer la caisse", "fin de journée caisse", "faire la caisse"],
+  "lecteur check-in": ["la porte ne s'ouvre pas", "tourniquet", "badge ne marche pas", "badger"],
+  "employé": ["nouveau coach", "nouveau collègue", "salarié", "compte coach"],
+  "représentant légal": ["mineur", "moins de 18 ans", "autorisation parentale"]
+}

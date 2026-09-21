@@ -1,0 +1,17 @@
+{
+  "_mode_d_emploi": "Réglages lus à distance par tous les postes (relus toutes les heures). veille=true masque l'avatar partout. cartes_actives / recherche_active permettent de brider une fonction.",
+  "veille": false,
+  "cartes_actives": true,
+  "recherche_active": true,
+  "intervalle_cartes_s": 120,
+  "seuil_inactivite_s": 60,
+  "duree_carte_s": 30,
+  "raccourci": "Control+Space",
+  "synchro_articles_heure": 3,
+  "relecture_contenu_min": 60,
+  "verification_maj_h": 4,
+  "resultats_max": 3,
+  "score_minimum": 5,
+  "couverture_minimum": 0.5,
+  "categories_affichables": ["ÉTABLI", "CONSENSUS", "DÉBATTU", "PRATIQUE MÉTIER"]
+}

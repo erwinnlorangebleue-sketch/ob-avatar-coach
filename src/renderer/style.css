@@ -1,0 +1,188 @@
+:root {
+  --orange: #f07d00;
+  --orange-clair: #ffb04d;
+  --bleu: #0b3c8c;
+  --bleu-clair: #2f6fd1;
+  --bleu-nuit: #0a1f44;
+  --fond: #ffffff;
+  --texte: #1c2433;
+  --texte-doux: #5b6577;
+  --bord: #d9dee8;
+  --vert: #1f8a5b;
+  --ambre: #b7791f;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+  font: 14px/1.45 "Segoe UI", system-ui, sans-serif;
+  color: var(--texte);
+  user-select: none;
+}
+
+/* ---------- Bulles ---------- */
+
+.bulle {
+  position: fixed;
+  right: 14px;
+  bottom: 186px;
+  width: 360px;
+  max-height: 380px;
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  background: var(--fond);
+  border: 1px solid var(--bord);
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(10, 31, 68, 0.25);
+  animation: bulle-entree 0.18s ease-out;
+}
+.bulle[hidden] { display: none; }
+.bulle::-webkit-scrollbar { width: 6px; }
+.bulle::-webkit-scrollbar-thumb { background: var(--bord); border-radius: 3px; }
+
+@keyframes bulle-entree {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+.bulle-entete {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.bulle-fermer {
+  margin-left: auto;
+  border: 0;
+  background: none;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--texte-doux);
+  cursor: pointer;
+  padding: 0 2px;
+}
+.bulle-fermer:hover { color: var(--texte); }
+
+/* ---------- Cartes : un registre = une apparence ---------- */
+
+.carte-famille {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--texte-doux);
+}
+.carte-registre {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 1px 8px;
+  border-radius: 10px;
+}
+.carte-titre {
+  margin: 2px 0 6px;
+  font-size: 15px;
+  color: var(--bleu-nuit);
+}
+.carte-corps p { margin: 0 0 6px; }
+.carte-corps ul { margin: 0 0 6px; padding-left: 18px; }
+.carte-corps blockquote {
+  margin: 0 0 6px;
+  padding-left: 8px;
+  border-left: 3px solid var(--bord);
+  color: var(--texte-doux);
+}
+.carte-source {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px solid var(--bord);
+  font-size: 11px;
+  color: var(--texte-doux);
+}
+.carte-source:empty { display: none; }
+
+/* ÉTABLI : affirme. Trait plein bleu, pastille pleine. */
+#carte[data-registre="ÉTABLI"] { border-left: 5px solid var(--bleu); }
+#carte[data-registre="ÉTABLI"] .carte-registre { background: var(--bleu); color: #fff; }
+
+/* CONSENSUS : nuance, porte sa source. Trait orange, pastille contour. */
+#carte[data-registre="CONSENSUS"] { border-left: 5px solid var(--orange); }
+#carte[data-registre="CONSENSUS"] .carte-registre { border: 1px solid var(--orange); color: var(--orange); }
+
+/* DÉBATTU : trait pointillé ambre, pastille en italique. */
+#carte[data-registre="DÉBATTU"] { border-left: 5px dashed var(--ambre); }
+#carte[data-registre="DÉBATTU"] .carte-registre { border: 1px dashed var(--ambre); color: var(--ambre); font-style: italic; }
+
+/* PRATIQUE MÉTIER : savoir-faire, pas un débat. Fond vert pâle, aucune source affichée. */
+#carte[data-registre="PRATIQUE MÉTIER"] { border-left: 5px solid var(--vert); background: #f3faf6; }
+#carte[data-registre="PRATIQUE MÉTIER"] .carte-registre { background: var(--vert); color: #fff; }
+
+/* ---------- Question ---------- */
+
+#question-form { display: flex; gap: 6px; }
+#question-champ {
+  flex: 1;
+  min-width: 0;
+  padding: 7px 9px;
+  border: 1px solid var(--bord);
+  border-radius: 8px;
+  font: inherit;
+  user-select: text;
+}
+#question-champ:focus { outline: 2px solid var(--bleu-clair); border-color: transparent; }
+#question-form button {
+  padding: 7px 12px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--bleu);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.rappel {
+  margin: 5px 0 0;
+  font-size: 11px;
+  color: var(--texte-doux);
+}
+#question-reponse:not(:empty) { margin-top: 10px; }
+.reponse-intro { margin: 0 0 6px; font-weight: 600; }
+.reponse-inconnu {
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #fff6e8;
+  color: #7a4a00;
+  font-weight: 600;
+}
+.resultat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 0;
+  border-top: 1px solid var(--bord);
+}
+.resultat-texte { flex: 1; min-width: 0; }
+.resultat-titre { font-weight: 600; color: var(--bleu-nuit); }
+.resultat-date { font-size: 11px; color: var(--texte-doux); }
+.resultat button {
+  flex: none;
+  padding: 5px 9px;
+  border: 1px solid var(--bleu);
+  border-radius: 7px;
+  background: #fff;
+  color: var(--bleu);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.resultat button:hover { background: var(--bleu); color: #fff; }
+.reponse-source {
+  margin: 8px 0 0;
+  font-size: 11px;
+  color: var(--texte-doux);
+}

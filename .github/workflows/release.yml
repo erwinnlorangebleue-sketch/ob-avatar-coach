@@ -1,0 +1,38 @@
+# Publie une Release GitHub à chaque tag v* (ex. v0.1.1).
+# Les postes installés la détectent via electron-updater et s'installent seuls.
+# Procédure : monter "version" dans package.json, committer, puis
+#   git tag v0.1.1 && git push origin v0.1.1
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm test
+
+      - name: Vérifier que le tag correspond à la version
+        shell: bash
+        run: |
+          v="v$(node -p "require('./package.json').version")"
+          [ "$v" = "$GITHUB_REF_NAME" ] || { echo "Tag $GITHUB_REF_NAME ≠ package.json $v"; exit 1; }
+
+      - name: Construire et publier
+        run: npx electron-builder --win --publish always
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

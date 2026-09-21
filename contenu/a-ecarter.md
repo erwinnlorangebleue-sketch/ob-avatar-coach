@@ -10,7 +10,7 @@ Source : `methodes-musculation_referentiel-critique_2026-09.md`, section « A. �
 
 ## Répétitions forcées systématiques
 
-**Pourquoi l'écarter :** Plus de fatigue aigýë et de dépendance au partenaire, sans gain supérieur démontré.
+**Pourquoi l'écarter :** Plus de fatigue aiguë et de dépendance au partenaire, sans gain supérieur démontré.
 
 **Mettre à la place :** S'arrêter avec 1 à 3 répétitions possibles en réserve la plupart du temps ; employer l'échec avec parcimonie sur des exercices sûrs.
 

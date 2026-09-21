@@ -1,0 +1,117 @@
+/* Silhouette CSS animée. Seules .sil-tete et .sil-corps captent la souris. */
+
+.silhouette {
+  position: fixed;
+  right: 18px;
+  bottom: 6px;
+  width: 110px;
+  height: 176px;
+  pointer-events: none;
+}
+
+.sil-tete,
+.sil-corps {
+  position: absolute;
+  left: 50%;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: filter 0.2s;
+}
+
+.sil-tete {
+  top: 6px;
+  width: 58px;
+  height: 58px;
+  margin-left: -29px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--orange-clair), var(--orange) 70%);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  animation: sil-hochement 6s ease-in-out infinite;
+  z-index: 2;
+}
+
+.sil-corps {
+  top: 58px;
+  width: 92px;
+  height: 104px;
+  margin-left: -46px;
+  border-radius: 46px 46px 22px 22px;
+  background: linear-gradient(180deg, var(--bleu-clair), var(--bleu) 75%);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+  transform-origin: 50% 100%;
+  animation: sil-respiration 4s ease-in-out infinite;
+}
+
+.sil-ombre {
+  position: absolute;
+  left: 50%;
+  bottom: 2px;
+  width: 96px;
+  height: 14px;
+  margin-left: -48px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.22);
+  filter: blur(3px);
+  animation: sil-ombre 4s ease-in-out infinite;
+}
+
+.sil-oeil {
+  position: absolute;
+  top: 22px;
+  width: 7px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--bleu-nuit);
+  animation: sil-clignement 5s infinite;
+}
+.sil-oeil-g { left: 17px; }
+.sil-oeil-d { right: 17px; }
+
+.sil-bouche {
+  position: absolute;
+  left: 50%;
+  top: 38px;
+  width: 16px;
+  height: 6px;
+  margin-left: -8px;
+  border-radius: 0 0 10px 10px;
+  background: var(--bleu-nuit);
+  transition: height 0.2s;
+}
+
+/* États */
+.silhouette[data-etat="survol"] .sil-tete,
+.silhouette[data-etat="survol"] .sil-corps { filter: brightness(1.1); }
+.silhouette[data-etat="survol"] .sil-tete { animation: sil-salut 0.8s ease-in-out; }
+.silhouette[data-etat="ecoute"] .sil-tete { transform: rotate(-8deg); animation: none; }
+.silhouette[data-etat="parle"] .sil-bouche { animation: sil-parole 0.35s ease-in-out 6 alternate; }
+
+@keyframes sil-respiration {
+  0%, 100% { transform: scale(1, 1); }
+  50% { transform: scale(1.03, 1.045); }
+}
+@keyframes sil-ombre {
+  0%, 100% { transform: scaleX(1); }
+  50% { transform: scaleX(1.04); }
+}
+@keyframes sil-hochement {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  30% { transform: translateY(-2px) rotate(2deg); }
+  60% { transform: translateY(0) rotate(-2deg); }
+}
+@keyframes sil-clignement {
+  0%, 94%, 100% { transform: scaleY(1); }
+  97% { transform: scaleY(0.1); }
+}
+@keyframes sil-salut {
+  0%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-6px); }
+}
+@keyframes sil-parole {
+  from { height: 4px; }
+  to { height: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .silhouette * { animation: none !important; }
+}

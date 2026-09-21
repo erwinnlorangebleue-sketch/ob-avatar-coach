@@ -1,0 +1,33 @@
+{
+  "_mode_d_emploi": "Tous les textes affichés par l'application. Modifier ici, jamais dans le code.",
+  "question_titre": "Une question Magicline ?",
+  "question_placeholder": "Ex. : il veut arrêter son abonnement",
+  "question_rappel_donnees": "Process uniquement : jamais de nom ni de numéro d'adhérent.",
+  "question_bouton": "Chercher",
+  "recherche_en_cours": "Je cherche…",
+  "resultats_intro": "Articles officiels du centre d'aide :",
+  "resultat_maj": "Mis à jour le",
+  "resultat_ouvrir": "Ouvrir l'article",
+  "inconnu": "Je ne sais pas. Je note la question.",
+  "index_absent": "Le centre d'aide n'a pas encore été téléchargé. Réessayez une fois le poste connecté.",
+  "recherche_desactivee": "La recherche est désactivée pour le moment.",
+  "source_centre_aide": "Source : centre d'aide L'Orange Bleue",
+  "synchro_du": "index du",
+  "hors_ligne": "hors ligne",
+  "fermer": "Fermer",
+  "avatar_titre": "Cliquez ou Ctrl+Espace pour poser une question",
+  "carte_source": "Source :",
+  "carte_date": "vérifiée le",
+  "registres": {
+    "ÉTABLI": "Établi",
+    "CONSENSUS": "Consensus",
+    "DÉBATTU": "Débattu",
+    "PRATIQUE MÉTIER": "Pratique métier"
+  },
+  "familles": {
+    "theorie": "Théorie",
+    "methodes": "Méthodes",
+    "a-ecarter": "À écarter",
+    "complements": "Compléments"
+  }
+}

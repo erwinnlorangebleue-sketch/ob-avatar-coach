@@ -1,0 +1,65 @@
+{
+  "name": "ob-avatar-coach",
+  "productName": "OB Coach",
+  "version": "0.1.0",
+  "description": "Assistant de bureau pour les coachs L'Orange Bleue",
+  "main": "src/main/main.js",
+  "author": "L'Orange Bleue",
+  "license": "UNLICENSED",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/erwinnlorangebleue-sketch/ob-avatar-coach.git"
+  },
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test \"test/*.test.js\"",
+    "essai-recherche": "node outils/essai-recherche.js",
+    "dist": "electron-builder --win --publish never",
+    "release": "electron-builder --win --publish always"
+  },
+  "dependencies": {
+    "electron-updater": "^6.3.9",
+    "koffi": "^3.3.1"
+  },
+  "devDependencies": {
+    "electron": "^38.0.0",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "fr.lorangebleue.ob-avatar-coach",
+    "productName": "OB Coach",
+    "files": [
+      "src/**/*",
+      "contenu/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "runAfterFinish": true,
+      "artifactName": "ob-coach-setup-${version}.${ext}"
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "erwinnlorangebleue-sketch",
+        "repo": "ob-avatar-coach",
+        "releaseType": "release"
+      }
+    ]
+  },
+  "allowScripts": {
+    "electron@38.8.6": true
+  }
+}

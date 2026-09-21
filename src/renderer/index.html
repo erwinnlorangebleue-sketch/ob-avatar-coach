@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:">
+  <title>OB Coach</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="avatar/silhouette.css">
+</head>
+<body>
+  <!-- Bulle de carte spontanée -->
+  <section id="carte" class="bulle" data-interactif hidden>
+    <header class="bulle-entete">
+      <span class="carte-famille"></span>
+      <span class="carte-registre"></span>
+      <button type="button" class="bulle-fermer" data-titre="fermer">×</button>
+    </header>
+    <h2 class="carte-titre"></h2>
+    <div class="carte-corps"></div>
+    <footer class="carte-source"></footer>
+  </section>
+
+  <!-- Bulle de question -->
+  <section id="question" class="bulle" data-interactif hidden>
+    <header class="bulle-entete">
+      <strong data-texte="question_titre"></strong>
+      <button type="button" class="bulle-fermer" data-titre="fermer">×</button>
+    </header>
+    <form id="question-form" autocomplete="off">
+      <input id="question-champ" type="text" maxlength="300" data-placeholder="question_placeholder">
+      <button type="submit" data-texte="question_bouton"></button>
+    </form>
+    <p class="rappel" data-texte="question_rappel_donnees"></p>
+    <div id="question-reponse" aria-live="polite"></div>
+  </section>
+
+  <!-- Avatar : le conteneur laisse passer les clics, seules ses parties visibles les captent -->
+  <div id="avatar" data-titre="avatar_titre"></div>
+
+  <script src="avatar/silhouette.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>
