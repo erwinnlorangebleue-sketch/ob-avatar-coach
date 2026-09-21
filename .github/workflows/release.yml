@@ -34,7 +34,28 @@ jobs:
           v="v$(node -p "require('./package.json').version")"
           [ "$v" = "$GITHUB_REF_NAME" ] || { echo "Tag $GITHUB_REF_NAME ≠ package.json $v"; exit 1; }
 
-      - name: Construire et publier
-        run: npx electron-builder --win --publish always
+      # Brouillon d'abord : electron-builder y dépose ses fichiers (sinon ses envois parallèles
+      # créent deux Releases), et les postes ne voient la version qu'une fois complète.
+      - name: Créer la Release en brouillon
+        shell: bash
+        run: gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1 || gh release create "$GITHUB_REF_NAME" --draft --title "$GITHUB_REF_NAME" --notes ""
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Les téléchargements depuis GitHub (outils NSIS) renvoient parfois 504 : jusqu'à 3 essais.
+      - name: Construire et déposer les fichiers
+        shell: bash
+        run: |
+          for essai in 1 2 3; do
+            npx electron-builder --win --publish always && exit 0
+            echo "Essai $essai échoué, nouvel essai dans 30 s"; sleep 30
+          done
+          exit 1
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publier la Release
+        shell: bash
+        run: gh release edit "$GITHUB_REF_NAME" --draft=false --latest
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
