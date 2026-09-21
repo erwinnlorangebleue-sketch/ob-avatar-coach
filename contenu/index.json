@@ -1,0 +1,682 @@
+[
+  {
+    "id": "meth-series-classiques",
+    "famille": "methodes",
+    "titre": "Séries classiques",
+    "categorie": "CONSENSUS",
+    "source": "methodes-musculation_referentiel-critique_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "meth-pyramidal-croissant",
+    "famille": "methodes",
+    "titre": "Pyramidal croissant",
+    "categorie": "CONSENSUS",
+    "source": "methodes-musculation_referentiel-critique_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "meth-pyramidal-decroissant",
+    "famille": "methodes",
+    "titre": "Pyramidal décroissant",
+    "categorie": "CONSENSUS",
+    "source": "methodes-musculation_referentiel-critique_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "meth-superset-agoniste-antagoniste",
+    "famille": "methodes",
+    "titre": "Superset agoniste–antagoniste",
+    "categorie": "CONSENSUS",
+    "source": "methodes-musculation_referentiel-critique_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "meth-bi-set-meme-muscle",
+    "famille": "methodes",
+    "titre": "Bi-set (même muscle)",
+    "categorie": "CONSENSUS",
+    "source": "methodes-musculation_referentiel-critique_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "meth-entrainement-circuit",
+    "famille": "methodes",
+    "titre": "Entraînement en circuit",
+    "categorie": "CONSENSUS",
+    "source": "methodes-musculation_referentiel-critique_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "meth-serie-degressive",
+    "famille": "methodes",
+    "titre": "Série dégressive (drop set)",
+    "categorie": "CONSENSUS",
+    "source": "methodes-musculation_referentiel-critique_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "meth-corps-entier",
+    "famille": "methodes",
+    "titre": "Corps entier (full body)",
+    "categorie": "CONSENSUS",
+    "source": "methodes-musculation_referentiel-critique_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "meth-programme-divise",
+    "famille": "methodes",
+    "titre": "Programme divisé (split)",
+    "categorie": "CONSENSUS",
+    "source": "methodes-musculation_referentiel-critique_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "meth-demi-corps",
+    "famille": "methodes",
+    "titre": "Demi-corps (haut/bas)",
+    "categorie": "CONSENSUS",
+    "source": "methodes-musculation_referentiel-critique_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "meth-series-a-l-echec",
+    "famille": "methodes",
+    "titre": "Séries à l'échec",
+    "categorie": "CONSENSUS",
+    "source": "methodes-musculation_referentiel-critique_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "meth-tempo-lent",
+    "famille": "methodes",
+    "titre": "Tempo lent ou super-lent",
+    "categorie": "CONSENSUS",
+    "source": "methodes-musculation_referentiel-critique_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "meth-amplitude-complete",
+    "famille": "methodes",
+    "titre": "Amplitude complète ou partielle",
+    "categorie": "CONSENSUS",
+    "source": "methodes-musculation_referentiel-critique_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "meth-confusion-musculaire",
+    "famille": "methodes",
+    "titre": "« Confusion musculaire »",
+    "categorie": "CONSENSUS",
+    "source": "methodes-musculation_referentiel-critique_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "meth-volume-allemand-10x10",
+    "famille": "methodes",
+    "titre": "Volume allemand 10×10",
+    "categorie": "CONSENSUS",
+    "source": "methodes-musculation_referentiel-critique_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "meth-repetitions-forcees",
+    "famille": "methodes",
+    "titre": "Répétitions forcées",
+    "categorie": "CONSENSUS",
+    "source": "methodes-musculation_referentiel-critique_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "ecart-confusion-musculaire-aleatoire",
+    "famille": "a-ecarter",
+    "titre": "« Confusion musculaire » aléatoire",
+    "categorie": "CONSENSUS",
+    "source": "methodes-musculation_referentiel-critique_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "ecart-repetitions-forcees-systematiques",
+    "famille": "a-ecarter",
+    "titre": "Répétitions forcées systématiques",
+    "categorie": "CONSENSUS",
+    "source": "methodes-musculation_referentiel-critique_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "ecart-volume-allemand-optimal",
+    "famille": "a-ecarter",
+    "titre": "Volume allemand 10×10 présenté comme optimal",
+    "categorie": "CONSENSUS",
+    "source": "methodes-musculation_referentiel-critique_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "ecart-pre-fatigue-mieux-recruter",
+    "famille": "a-ecarter",
+    "titre": "Pré-fatigue censée « mieux recruter » le muscle cible",
+    "categorie": "CONSENSUS",
+    "source": "methodes-musculation_referentiel-critique_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "ecart-tempo-super-lent-superieur",
+    "famille": "a-ecarter",
+    "titre": "Tempo super-lent présenté comme hypertrophique supérieur",
+    "categorie": "CONSENSUS",
+    "source": "methodes-musculation_referentiel-critique_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "ecart-pyramides-superieures",
+    "famille": "a-ecarter",
+    "titre": "Pyramides présentées comme supérieures",
+    "categorie": "CONSENSUS",
+    "source": "methodes-musculation_referentiel-critique_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "ecart-tabata-musculation",
+    "famille": "a-ecarter",
+    "titre": "Tabata avec mouvements de musculation complexes",
+    "categorie": "CONSENSUS",
+    "source": "methodes-musculation_referentiel-critique_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "ecart-raccourcis-scientifiques",
+    "famille": "a-ecarter",
+    "titre": "Stato-dynamique, post-fatigue ou série géante vendus comme raccourcis scientifiques",
+    "categorie": "DÉBATTU",
+    "source": "methodes-musculation_referentiel-critique_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "comp-bisglycinate-fer",
+    "famille": "complements",
+    "titre": "Bisglycinate de fer",
+    "categorie": "ÉTABLI",
+    "source": "complements-nutripure_cartes-coach_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "comp-magnesium",
+    "famille": "complements",
+    "titre": "Magnésium (+ taurine + B6)",
+    "categorie": "ÉTABLI",
+    "source": "complements-nutripure_cartes-coach_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "comp-multivitamines",
+    "famille": "complements",
+    "titre": "Multivitamines",
+    "categorie": "ÉTABLI",
+    "source": "complements-nutripure_cartes-coach_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "comp-omega-3-epax",
+    "famille": "complements",
+    "titre": "Oméga 3 EPAX",
+    "categorie": "ÉTABLI",
+    "source": "complements-nutripure_cartes-coach_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "comp-vitamine-b3",
+    "famille": "complements",
+    "titre": "Vitamine B3 (niacinamide)",
+    "categorie": "ÉTABLI",
+    "source": "complements-nutripure_cartes-coach_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "comp-vitamine-b9",
+    "famille": "complements",
+    "titre": "Vitamine B9 (5-MTHF)",
+    "categorie": "ÉTABLI",
+    "source": "complements-nutripure_cartes-coach_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "comp-vitamine-c",
+    "famille": "complements",
+    "titre": "Vitamine C",
+    "categorie": "ÉTABLI",
+    "source": "complements-nutripure_cartes-coach_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "comp-vitamine-d3-k2",
+    "famille": "complements",
+    "titre": "Vitamine D3 + K2-MK7",
+    "categorie": "ÉTABLI",
+    "source": "complements-nutripure_cartes-coach_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "comp-creatine-monohydrate",
+    "famille": "complements",
+    "titre": "Créatine monohydrate Creapure®",
+    "categorie": "ÉTABLI",
+    "source": "complements-nutripure_cartes-coach_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "comp-maltodextrine-bio",
+    "famille": "complements",
+    "titre": "Maltodextrine bio",
+    "categorie": "ÉTABLI",
+    "source": "complements-nutripure_cartes-coach_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "comp-proteine-vegetale",
+    "famille": "complements",
+    "titre": "Protéine végétale bio (pois/riz)",
+    "categorie": "ÉTABLI",
+    "source": "complements-nutripure_cartes-coach_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "comp-pure-gainer",
+    "famille": "complements",
+    "titre": "Pure Gainer",
+    "categorie": "ÉTABLI",
+    "source": "complements-nutripure_cartes-coach_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "comp-pure-granola",
+    "famille": "complements",
+    "titre": "Pure Granola bio — chocolat, multigraines, banane-cajou",
+    "categorie": "À VÉRIFIER",
+    "source": "complements-nutripure_cartes-coach_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "comp-pure-recovery",
+    "famille": "complements",
+    "titre": "Pure Recovery — chocolat, neutre, vanille",
+    "categorie": "À VÉRIFIER",
+    "source": "complements-nutripure_cartes-coach_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "comp-pure-workout",
+    "famille": "complements",
+    "titre": "Pure Workout naturel myrtille",
+    "categorie": "À VÉRIFIER",
+    "source": "complements-nutripure_cartes-coach_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "comp-whey-isolate",
+    "famille": "complements",
+    "titre": "Whey Isolate native",
+    "categorie": "ÉTABLI",
+    "source": "complements-nutripure_cartes-coach_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "comp-sans-allegation-ashwagandha",
+    "famille": "complements",
+    "titre": "Ashwagandha (sans allégation)",
+    "categorie": "ÉTABLI",
+    "source": "complements-nutripure_cartes-coach_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "comp-sans-allegation-fenugrec",
+    "famille": "complements",
+    "titre": "Fenugrec (sans allégation)",
+    "categorie": "ÉTABLI",
+    "source": "complements-nutripure_cartes-coach_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "comp-sans-allegation-glycine",
+    "famille": "complements",
+    "titre": "Glycine (sans allégation)",
+    "categorie": "ÉTABLI",
+    "source": "complements-nutripure_cartes-coach_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "comp-sans-allegation-pure-bio2",
+    "famille": "complements",
+    "titre": "Pure Bio² (probiotiques) (sans allégation)",
+    "categorie": "ÉTABLI",
+    "source": "complements-nutripure_cartes-coach_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "comp-sans-allegation-pure-detox",
+    "famille": "complements",
+    "titre": "Pure Detox – Bien-être du foie (sans allégation)",
+    "categorie": "ÉTABLI",
+    "source": "complements-nutripure_cartes-coach_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "comp-sans-allegation-pure-zen",
+    "famille": "complements",
+    "titre": "Pure Zen (sans allégation)",
+    "categorie": "ÉTABLI",
+    "source": "complements-nutripure_cartes-coach_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-a01",
+    "famille": "theorie",
+    "titre": "Tendons",
+    "categorie": "CONSENSUS",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-a02",
+    "famille": "theorie",
+    "titre": "Quadriceps au squat",
+    "categorie": "ÉTABLI",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-a03",
+    "famille": "theorie",
+    "titre": "Fessiers",
+    "categorie": "ÉTABLI",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-a04",
+    "famille": "theorie",
+    "titre": "Gainage / tronc",
+    "categorie": "CONSENSUS",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-a05",
+    "famille": "theorie",
+    "titre": "Scapula à l'épaule",
+    "categorie": "CONSENSUS",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-a06",
+    "famille": "theorie",
+    "titre": "Talonnettes au squat",
+    "categorie": "CONSENSUS",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-a07",
+    "famille": "theorie",
+    "titre": "Action excentrique",
+    "categorie": "ÉTABLI",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-a08",
+    "famille": "theorie",
+    "titre": "Morphologie et squat",
+    "categorie": "CONSENSUS",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-p01",
+    "famille": "theorie",
+    "titre": "Échauffement",
+    "categorie": "CONSENSUS",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-p02",
+    "famille": "theorie",
+    "titre": "Filières énergétiques",
+    "categorie": "ÉTABLI",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-p03",
+    "famille": "theorie",
+    "titre": "Courbatures",
+    "categorie": "ÉTABLI",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-p04",
+    "famille": "theorie",
+    "titre": "Transpiration",
+    "categorie": "ÉTABLI",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-p06",
+    "famille": "theorie",
+    "titre": "Talk test",
+    "categorie": "CONSENSUS",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-p07",
+    "famille": "theorie",
+    "titre": "Débutant et hypertrophie",
+    "categorie": "CONSENSUS",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-p08",
+    "famille": "theorie",
+    "titre": "Charge interne variable",
+    "categorie": "CONSENSUS",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-n01",
+    "famille": "theorie",
+    "titre": "Hydratation",
+    "categorie": "CONSENSUS",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-n02",
+    "famille": "theorie",
+    "titre": "Protéines alimentaires",
+    "categorie": "ÉTABLI",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-n03",
+    "famille": "theorie",
+    "titre": "Glucides",
+    "categorie": "CONSENSUS",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-n04",
+    "famille": "theorie",
+    "titre": "Fibres",
+    "categorie": "CONSENSUS",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-n05",
+    "famille": "theorie",
+    "titre": "Repas avant l'effort",
+    "categorie": "CONSENSUS",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-n06",
+    "famille": "theorie",
+    "titre": "Fenêtre anabolique",
+    "categorie": "CONSENSUS",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-n07",
+    "famille": "theorie",
+    "titre": "Compléments, le principe",
+    "categorie": "CONSENSUS",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-n08",
+    "famille": "theorie",
+    "titre": "Petits changements",
+    "categorie": "DÉBATTU",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-t02",
+    "famille": "theorie",
+    "titre": "Démonstration",
+    "categorie": "CONSENSUS",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-t03",
+    "famille": "theorie",
+    "titre": "Feedback",
+    "categorie": "CONSENSUS",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-t05",
+    "famille": "theorie",
+    "titre": "Signaux d'arrêt",
+    "categorie": "DÉBATTU",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-t06",
+    "famille": "theorie",
+    "titre": "Tâches graduées et confiance",
+    "categorie": "CONSENSUS",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-t07",
+    "famille": "theorie",
+    "titre": "Ressenti de l'adhérent",
+    "categorie": "CONSENSUS",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-t08",
+    "famille": "theorie",
+    "titre": "Réduire le feedback",
+    "categorie": "DÉBATTU",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-r01",
+    "famille": "theorie",
+    "titre": "Question ouverte",
+    "categorie": "DÉBATTU",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-r02",
+    "famille": "theorie",
+    "titre": "Reformulation",
+    "categorie": "CONSENSUS",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-r04",
+    "famille": "theorie",
+    "titre": "Offre et promesse",
+    "categorie": "CONSENSUS",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-r05",
+    "famille": "theorie",
+    "titre": "Planifier l'entraînement",
+    "categorie": "CONSENSUS",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-r06",
+    "famille": "theorie",
+    "titre": "Au-delà du poids",
+    "categorie": "DÉBATTU",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-r07",
+    "famille": "theorie",
+    "titre": "Reprise après absence",
+    "categorie": "CONSENSUS",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-t01",
+    "famille": "theorie",
+    "titre": "Une consigne à la fois",
+    "categorie": "PRATIQUE MÉTIER",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-t04",
+    "famille": "theorie",
+    "titre": "Maîtriser le geste avant la charge",
+    "categorie": "PRATIQUE MÉTIER",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-r03",
+    "famille": "theorie",
+    "titre": "Offrir un choix",
+    "categorie": "PRATIQUE MÉTIER",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  },
+  {
+    "id": "theo-r08",
+    "famille": "theorie",
+    "titre": "Respecter un refus",
+    "categorie": "PRATIQUE MÉTIER",
+    "source": "contre-expertise-physiologie_40-tips_2026-09.md",
+    "date": "2026-09-21"
+  }
+]
