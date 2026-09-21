@@ -19,10 +19,12 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
 
-      - run: npm ci
+      # Aucun script d'installation nécessaire : electron-builder télécharge Electron lui-même
+      # et koffi arrive précompilé par sa dépendance optionnelle win32-x64.
+      - run: npm ci --ignore-scripts
 
       - run: npm test
 
