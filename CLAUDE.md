@@ -79,6 +79,7 @@ cliqué une fois par poste, sur place.
   elles nuancent, portent leur source et sa date.
 - Cartes **`PRATIQUE MÉTIER`** : savoir-faire assumé, pas une affirmation
   scientifique. Ne jamais l'afficher comme un débat.
+- Cartes À VÉRIFIER : une information manque pour trancher (typiquement une étiquette produit). Ne jamais afficher tant qu'elle n'est pas levée.
 
 Ces registres n'ont pas la même apparence à l'écran.
 
