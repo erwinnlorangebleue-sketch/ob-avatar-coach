@@ -49,6 +49,7 @@
   function recevoirInit(d) {
     textes = d.textes || {};
     appliquerTextes();
+    majVeilleuse(d.veilleuse);
   }
   ob.init().then(recevoirInit);
   ob.surInit(recevoirInit);
@@ -89,6 +90,7 @@
 
   function fermerCarte() {
     elCarte.hidden = true;
+    elChoixVeilleuse.hidden = true;
     clearInterval(minuterieCarte);
     if (elQuestion.hidden) avatar.etat('repos');
     relacherSiMasque();
@@ -118,6 +120,34 @@
   elCarte.addEventListener('mouseenter', () => { carteSurvolee = true; });
   elCarte.addEventListener('mouseleave', () => { carteSurvolee = false; });
   elCarte.querySelector('.bulle-fermer').addEventListener('click', fermerCarte);
+
+  // ---------- Veilleuse des cartes (choisie par le coach, toujours limitée dans le temps) ----------
+  const elChoixVeilleuse = elCarte.querySelector('.carte-veilleuse');
+  const elEtatVeilleuse = document.getElementById('veilleuse-etat');
+
+  elCarte.querySelector('.carte-cloche').addEventListener('click', () => {
+    elChoixVeilleuse.hidden = !elChoixVeilleuse.hidden;
+  });
+  elChoixVeilleuse.querySelectorAll('[data-veilleuse]').forEach((bouton) => {
+    bouton.addEventListener('click', () => {
+      ob.veilleuse(bouton.dataset.veilleuse);
+      fermerCarte();
+    });
+  });
+  elEtatVeilleuse.querySelector('button').addEventListener('click', () => ob.veilleuse('aucune'));
+
+  function echeanceLisible(iso) {
+    const d = new Date(iso);
+    const memeJour = d.toDateString() === new Date().toDateString();
+    return d.toLocaleString('fr-FR', memeJour
+      ? { hour: '2-digit', minute: '2-digit' }
+      : { weekday: 'long', hour: '2-digit', minute: '2-digit' });
+  }
+  function majVeilleuse(jusqua) {
+    elEtatVeilleuse.hidden = !jusqua;
+    if (jusqua) document.getElementById('veilleuse-texte').textContent = `${t('veilleuse_active')} ${echeanceLisible(jusqua)}`;
+  }
+  ob.surVeilleuse(majVeilleuse);
 
   // ---------- Question ----------
   document.querySelectorAll('.sil-tete, .sil-corps').forEach((el) => {

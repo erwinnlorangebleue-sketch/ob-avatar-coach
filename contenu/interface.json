@@ -18,6 +18,12 @@
   "avatar_titre": "Cliquez ou Ctrl+Espace pour poser une question",
   "carte_source": "Source :",
   "carte_date": "vérifiée le",
+  "veilleuse_titre": "Mettre les rappels en veilleuse",
+  "veilleuse_choix": "Plus de rappels :",
+  "veilleuse_courte": "pendant 1 heure",
+  "veilleuse_demain": "jusqu'à demain",
+  "veilleuse_active": "Rappels en veilleuse jusqu'à",
+  "veilleuse_reactiver": "Réactiver",
   "registres": {
     "ÉTABLI": "Établi",
     "CONSENSUS": "Consensus",

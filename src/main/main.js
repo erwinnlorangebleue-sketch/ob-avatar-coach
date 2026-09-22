@@ -11,6 +11,7 @@ const { creerCentreAide } = require('./centre-aide');
 const { construireCartes, creerPioche } = require('./cartes');
 const R = require('./recherche');
 const fenetreActive = require('./fenetre-active');
+const veilleuse = require('./veilleuse');
 
 const LARGEUR = 400;
 const HAUTEUR = 580;
@@ -33,6 +34,9 @@ let raccourciEnregistre = null;
 let secondesActives = 0;
 let majPrete = false;
 let derniereSynchroArticlesEchouee = false;
+// Veilleuse des cartes choisie par le coach : dans etat.json, donc conservée au redémarrage
+// et visible dans la télémétrie du poste.
+let veilleuseJusqua = journal.lireEtat().veilleuse_jusqua || null;
 
 // ---------- Réseau (pile Chromium : respecte le proxy du poste) ----------
 
@@ -87,7 +91,22 @@ function appliquerContenu() {
 }
 
 function donneesInit() {
-  return { textes: etat.textes, version: app.getVersion() };
+  return { textes: etat.textes, version: app.getVersion(), veilleuse: veilleuseEnCours() };
+}
+
+// ---------- Veilleuse des cartes ----------
+
+function veilleuseEnCours() {
+  return veilleuse.estActive(veilleuseJusqua, new Date()) ? veilleuseJusqua : null;
+}
+
+function reglerVeilleuse(mode) {
+  const fin = veilleuse.calculerFin(mode, new Date(), etat.config);
+  veilleuseJusqua = fin ? fin.toISOString() : null;
+  secondesActives = 0; // pas de carte immédiate au retour
+  journal.majEtat({ veilleuse_jusqua: veilleuseJusqua });
+  journal.info(veilleuseJusqua ? `cartes en veilleuse jusqu'au ${veilleuseJusqua}` : 'cartes réactivées');
+  if (fenetre) fenetre.webContents.send('veilleuse', veilleuseJusqua);
 }
 
 // ---------- Fenêtre ----------
@@ -230,6 +249,7 @@ ipcMain.on('survol', (_, actif) => {
 });
 
 ipcMain.on('demander-question', () => ouvrirQuestion());
+ipcMain.on('veilleuse', (_, mode) => reglerVeilleuse(veilleuse.MODES.includes(mode) ? mode : null));
 ipcMain.on('question-fermee', () => fermerQuestion());
 
 ipcMain.handle('rechercher', (_, question) => {
@@ -284,7 +304,8 @@ function reaffirmerPremierPlan() {
 function tickActivite() {
   reaffirmerPremierPlan();
   const c = etat.config;
-  if (c.veille || !c.cartes_actives || !fenetre) return;
+  if (veilleuseJusqua && !veilleuseEnCours()) reglerVeilleuse(null); // échéance passée
+  if (c.veille || !c.cartes_actives || veilleuseJusqua || !fenetre) return;
   if (powerMonitor.getSystemIdleTime() < (c.seuil_inactivite_s || 60)) secondesActives += PAS_MINUTERIE_S;
   if (secondesActives >= (c.intervalle_cartes_s || 120) && !questionOuverte) {
     secondesActives = 0;

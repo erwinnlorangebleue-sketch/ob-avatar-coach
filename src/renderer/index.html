@@ -13,8 +13,16 @@
     <header class="bulle-entete">
       <span class="carte-famille"></span>
       <span class="carte-registre"></span>
+      <button type="button" class="carte-cloche" data-titre="veilleuse_titre">
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 3a6 6 0 0 0-6 6v4l-2 3h16l-2-3V9a6 6 0 0 0-6-6zM10 19a2 2 0 0 0 4 0M4 4l16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
       <button type="button" class="bulle-fermer" data-titre="fermer">×</button>
     </header>
+    <div class="carte-veilleuse" hidden>
+      <span data-texte="veilleuse_choix"></span>
+      <button type="button" data-veilleuse="courte" data-texte="veilleuse_courte"></button>
+      <button type="button" data-veilleuse="demain" data-texte="veilleuse_demain"></button>
+    </div>
     <h2 class="carte-titre"></h2>
     <div class="carte-corps"></div>
     <footer class="carte-source"></footer>
@@ -31,6 +39,10 @@
       <button type="submit" data-texte="question_bouton"></button>
     </form>
     <p class="rappel" data-texte="question_rappel_donnees"></p>
+    <p id="veilleuse-etat" hidden>
+      <span id="veilleuse-texte"></span>
+      <button type="button" data-texte="veilleuse_reactiver"></button>
+    </p>
     <div id="question-reponse" aria-live="polite"></div>
   </section>
 

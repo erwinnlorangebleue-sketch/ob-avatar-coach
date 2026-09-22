@@ -1,7 +1,7 @@
 {
   "name": "ob-avatar-coach",
   "productName": "OB Coach",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Assistant de bureau pour les coachs L'Orange Bleue",
   "main": "src/main/main.js",
   "author": "L'Orange Bleue",

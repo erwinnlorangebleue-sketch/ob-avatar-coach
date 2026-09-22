@@ -68,6 +68,49 @@ body {
 }
 .bulle-fermer:hover { color: var(--texte); }
 
+/* ---------- Veilleuse des cartes ---------- */
+
+.carte-cloche {
+  margin-left: auto;
+  border: 0;
+  background: none;
+  padding: 2px;
+  color: var(--texte-doux);
+  cursor: pointer;
+  display: flex;
+}
+.carte-cloche:hover { color: var(--texte); }
+.carte-cloche + .bulle-fermer { margin-left: 0; }
+.carte-veilleuse,
+#veilleuse-etat {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 8px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: #eef3fb;
+  font-size: 12px;
+}
+.carte-veilleuse[hidden],
+#veilleuse-etat[hidden] { display: none; }
+#veilleuse-etat { margin: 8px 0 0; }
+#veilleuse-etat span { flex: 1; }
+.carte-veilleuse button,
+#veilleuse-etat button {
+  padding: 3px 8px;
+  border: 1px solid var(--bleu);
+  border-radius: 7px;
+  background: #fff;
+  color: var(--bleu);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.carte-veilleuse button:hover,
+#veilleuse-etat button:hover { background: var(--bleu); color: #fff; }
+
 /* ---------- Cartes : un registre = une apparence ---------- */
 
 .carte-famille {
