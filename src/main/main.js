@@ -2,6 +2,7 @@
 // Processus principal : fenêtre transparente traversante, raccourci global, cartes,
 // recherche dans le centre d'aide, synchronisations, mise à jour automatique.
 
+const os = require('os');
 const path = require('path');
 const { app, BrowserWindow, screen, ipcMain, globalShortcut, powerMonitor, shell, net } = require('electron');
 
@@ -12,6 +13,7 @@ const { construireCartes, creerPioche } = require('./cartes');
 const R = require('./recherche');
 const fenetreActive = require('./fenetre-active');
 const veilleuse = require('./veilleuse');
+const { creerReleveProcesseur } = require('./processeur');
 
 // La fenêtre épouse ce que la page affiche (IPC « taille »), ancrée en bas à droite :
 // jamais plus grande que la mascotte, ou que la mascotte et sa bulle quand elle est ouverte.
@@ -19,6 +21,7 @@ const veilleuse = require('./veilleuse');
 const TAILLE_DEPART = { largeur: 200, hauteur: 200 };
 const LARGEUR_MAX = 400;
 const PAS_MINUTERIE_S = 5;
+const PAS_RELEVE_PROCESSEUR_S = 30;
 const DELAI_RESEAU_MS = 20000;
 const ORIGINE_CENTRE_AIDE = 'https://support.lorangebleue.fr';
 
@@ -136,6 +139,25 @@ function animationsEnPause() {
 
 function envoyerPause() {
   if (fenetre) fenetre.webContents.send('pause', animationsEnPause());
+  changerPhaseProcesseur();
+}
+
+// Télémétrie : moyenne processeur sur 5 min, en attente et en lecture (voir processeur.js).
+// Rien d'autre que des mesures du poste : aucune donnée d'adhérent.
+let phaseMascotte = { phase: 'autre', mode: null, variante: null };
+const releveProcesseur = creerReleveProcesseur({
+  lireMetriques: () => app.getAppMetrics(),
+  surMoyenne(phase, mesure) {
+    const avant = journal.lireEtat().processeur || {};
+    journal.majEtat({
+      processeur: { ...avant, coeurs: os.cpus().length, [phase]: { ...mesure, le: new Date().toISOString() } },
+    });
+  },
+});
+
+function changerPhaseProcesseur() {
+  if (!app.isReady()) return;
+  releveProcesseur.changer(animationsEnPause() ? { ...phaseMascotte, phase: 'pause' } : phaseMascotte);
 }
 
 function accueillir() {
@@ -313,6 +335,15 @@ ipcMain.on('mascotte', (_, m) => {
   else journal.info('mascotte affichée : ' + mode);
 });
 
+ipcMain.on('phase', (_, p) => {
+  phaseMascotte = {
+    phase: ['attente', 'lecture'].includes(p && p.phase) ? p.phase : 'autre',
+    mode: p && p.mode === 'video' ? 'video' : 'silhouette',
+    variante: Number(p && p.variante) || null,
+  };
+  changerPhaseProcesseur();
+});
+
 ipcMain.handle('rechercher', (_, question) => {
   const q = String(question || '').slice(0, 300).trim();
   if (!q) return { etat: 'vide' };
@@ -452,6 +483,7 @@ app.whenReady().then(() => {
   powerMonitor.on('unlock-screen', () => surHorsService('verrou', false));
 
   setInterval(tickActivite, PAS_MINUTERIE_S * 1000);
+  setInterval(() => releveProcesseur.echantillon(), PAS_RELEVE_PROCESSEUR_S * 1000);
   synchroniserContenu().finally(() => {
     if (heuresDepuisSynchro() > 20) synchroniserArticles();
   });
