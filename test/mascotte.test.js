@@ -22,10 +22,10 @@ test('mascotte.json : mode connu, tous les états ont un clip, réglages présen
   assert.strictEqual(reglages.recherche_seuil_ms, 300);
 });
 
-test('chaque clip existe en 320 et en 640, avec repos.png, et assets/ est livré', () => {
+test('chaque clip existe dans chaque variante, avec repos.png, et assets/ est livré', () => {
   const dossier = path.join(__dirname, '..', 'assets', 'mascotte', reglages.dossier);
   assert.ok(fs.existsSync(path.join(dossier, 'repos.png')), 'repos.png');
-  for (const cote of ['320', '640']) {
+  for (const cote of reglages.variantes.map(String)) {
     for (const { clip } of Object.values(reglages.etats)) {
       assert.ok(fs.existsSync(path.join(dossier, cote, clip + '.webm')), `${cote}/${clip}.webm`);
     }
