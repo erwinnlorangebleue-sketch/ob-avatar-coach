@@ -32,6 +32,7 @@
     "files": [
       "src/**/*",
       "contenu/**/*",
+      "assets/**/*",
       "package.json"
     ],
     "win": {
