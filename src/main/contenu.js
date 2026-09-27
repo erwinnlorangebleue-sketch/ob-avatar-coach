@@ -8,7 +8,7 @@ const path = require('path');
 
 const BASE_DISTANTE = 'https://raw.githubusercontent.com/erwinnlorangebleue-sketch/ob-avatar-coach/main/contenu/';
 
-const FICHIERS_JSON = ['config.json', 'interface.json', 'index.json', 'synonymes.json', 'mots-vides.json'];
+const FICHIERS_JSON = ['config.json', 'interface.json', 'index.json', 'synonymes.json', 'mots-vides.json', 'mascotte.json'];
 const FAMILLES = ['theorie', 'methodes', 'a-ecarter', 'complements'];
 const FICHIERS_MD = FAMILLES.map((f) => f + '.md');
 
@@ -51,6 +51,7 @@ function creerContenu({ dossierLivre, dossierCache, journal, telecharger }) {
       index: json['index.json'] || [],
       synonymes: json['synonymes.json'] || {},
       motsVides: json['mots-vides.json'] || { mots: [] },
+      mascotte: json['mascotte.json'] || {},
       md,
     };
   }

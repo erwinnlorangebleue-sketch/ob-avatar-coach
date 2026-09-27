@@ -2,10 +2,11 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; media-src 'self'">
   <title>OB Coach</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="avatar/silhouette.css">
+  <link rel="stylesheet" href="avatar/mascotte.css">
 </head>
 <body>
   <!-- Bulle de carte spontanée -->
@@ -46,10 +47,11 @@
     <div id="question-reponse" aria-live="polite"></div>
   </section>
 
-  <!-- Avatar : le conteneur laisse passer les clics, seules ses parties visibles les captent -->
+  <!-- Avatar : seules ses parties visibles captent les clics (data-interactif ou masque d'opacité) -->
   <div id="avatar" data-titre="avatar_titre"></div>
 
   <script src="avatar/silhouette.js"></script>
+  <script src="avatar/mascotte.js"></script>
   <script src="renderer.js"></script>
 </body>
 </html>

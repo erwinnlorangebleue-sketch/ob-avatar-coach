@@ -26,10 +26,11 @@ body {
 
 /* ---------- Bulles ---------- */
 
+/* Au-dessus de la zone de la mascotte (320 px, voir avatar/mascotte.css). */
 .bulle {
   position: fixed;
   right: 14px;
-  bottom: 186px;
+  bottom: 312px;
   width: 360px;
   max-height: 380px;
   overflow-y: auto;
@@ -42,6 +43,8 @@ body {
   animation: bulle-entree 0.18s ease-out;
 }
 .bulle[hidden] { display: none; }
+/* Silhouette, plus petite : les bulles descendent juste au-dessus d'elle. */
+body.avatar-silhouette .bulle { bottom: 186px; }
 .bulle::-webkit-scrollbar { width: 6px; }
 .bulle::-webkit-scrollbar-thumb { background: var(--bord); border-radius: 3px; }
 

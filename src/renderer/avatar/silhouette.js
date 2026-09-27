@@ -1,7 +1,9 @@
 'use strict';
-// Avatar en mode silhouette CSS. Ce mode ne disparaît jamais : c'est le repli quand le
-// modèle 3D ne charge pas, et le mode léger des vieux postes.
-// Interface commune à tout avatar : monter(conteneur) puis etat('repos' | 'survol' | 'ecoute' | 'parle').
+// Avatar en mode silhouette CSS. Ce mode ne disparaît jamais : c'est le repli quand une vidéo
+// de la mascotte ne se lit pas, le réglage « silhouette » de contenu/mascotte.json, et le mode
+// léger des vieux postes.
+// Interface commune à tout avatar : monter(conteneur) puis etat('repos' | 'survol' | 'ecoute' | 'parle'),
+// evenement(nom) (clips de la mascotte, ignorés ici), contient(x, y), pause(b), detruire().
 
 (function () {
   function monter(conteneur) {
@@ -17,6 +19,16 @@
     return {
       etat(nom) {
         conteneur.dataset.etat = nom;
+      },
+      evenement() {},
+      contient: () => false, // tête et corps portent data-interactif : pas besoin de masque
+      pause(b) {
+        conteneur.classList.toggle('en-pause', !!b);
+      },
+      detruire() {
+        conteneur.replaceChildren();
+        conteneur.classList.remove('silhouette', 'en-pause');
+        delete conteneur.dataset.etat;
       },
     };
   }

@@ -13,8 +13,9 @@ const R = require('./recherche');
 const fenetreActive = require('./fenetre-active');
 const veilleuse = require('./veilleuse');
 
+// Zone de la mascotte : 320 × 320 en bas à droite, bulles au-dessus (voir style.css).
 const LARGEUR = 400;
-const HAUTEUR = 580;
+const HAUTEUR = 700;
 const PAS_MINUTERIE_S = 5;
 const DELAI_RESEAU_MS = 20000;
 const ORIGINE_CENTRE_AIDE = 'https://support.lorangebleue.fr';
@@ -34,6 +35,7 @@ let raccourciEnregistre = null;
 let secondesActives = 0;
 let majPrete = false;
 let derniereSynchroArticlesEchouee = false;
+const horsService = { veille: false, verrou: false }; // veille système, session verrouillée
 // Veilleuse des cartes choisie par le coach : dans etat.json, donc conservée au redémarrage
 // et visible dans la télémétrie du poste.
 let veilleuseJusqua = journal.lireEtat().veilleuse_jusqua || null;
@@ -79,6 +81,7 @@ function appliquerContenu() {
   etat = {
     config: brut.config,
     textes: brut.textes,
+    mascotte: brut.mascotte,
     cartes,
     piocher: creerPioche(cartes),
     regles: R.preparerSynonymes(brut.synonymes),
@@ -91,7 +94,13 @@ function appliquerContenu() {
 }
 
 function donneesInit() {
-  return { textes: etat.textes, version: app.getVersion(), veilleuse: veilleuseEnCours() };
+  return {
+    textes: etat.textes,
+    version: app.getVersion(),
+    veilleuse: veilleuseEnCours(),
+    mascotte: etat.mascotte,
+    pause: animationsEnPause(),
+  };
 }
 
 // ---------- Veilleuse des cartes ----------
@@ -107,6 +116,29 @@ function reglerVeilleuse(mode) {
   journal.majEtat({ veilleuse_jusqua: veilleuseJusqua });
   journal.info(veilleuseJusqua ? `cartes en veilleuse jusqu'au ${veilleuseJusqua}` : 'cartes réactivées');
   if (fenetre) fenetre.webContents.send('veilleuse', veilleuseJusqua);
+}
+
+// ---------- Mascotte ----------
+
+// Vidéos en pause quand personne ne peut les voir : fenêtre cachée (veille à distance),
+// veille système, session verrouillée.
+function animationsEnPause() {
+  return !fenetre || !fenetre.isVisible() || horsService.veille || horsService.verrou;
+}
+
+function envoyerPause() {
+  if (fenetre) fenetre.webContents.send('pause', animationsEnPause());
+}
+
+function saluer() {
+  if (fenetre && !animationsEnPause()) fenetre.webContents.send('salut');
+}
+
+function surHorsService(cle, actif) {
+  const avant = animationsEnPause();
+  horsService[cle] = actif;
+  envoyerPause();
+  if (avant && !animationsEnPause()) saluer(); // sortie de veille
 }
 
 // ---------- Fenêtre ----------
@@ -162,6 +194,8 @@ function creerFenetre() {
     questionOuverte = false;
     fenetre.webContents.send('fermer-question');
   });
+  fenetre.on('show', envoyerPause);
+  fenetre.on('hide', envoyerPause);
   fenetre.webContents.on('render-process-gone', (_, d) => {
     journal.erreur('rendu arrêté : ' + d.reason);
     fenetre.reload();
@@ -181,6 +215,8 @@ function appliquerVeille() {
     if (fenetre.isVisible()) { fenetre.hide(); journal.info('mise en veille à distance'); }
   } else if (!fenetre.isVisible() && fenetre.webContents.getURL()) {
     fenetre.showInactive();
+    journal.info('sortie de veille à distance');
+    saluer();
   }
 }
 
@@ -251,6 +287,13 @@ ipcMain.on('survol', (_, actif) => {
 ipcMain.on('demander-question', () => ouvrirQuestion());
 ipcMain.on('veilleuse', (_, mode) => reglerVeilleuse(veilleuse.MODES.includes(mode) ? mode : null));
 ipcMain.on('question-fermee', () => fermerQuestion());
+// Mode réellement affiché (vidéo ou silhouette) et, s'il y en a une, la panne qui l'a imposé.
+ipcMain.on('mascotte', (_, m) => {
+  const mode = m && m.mode === 'video' ? 'video' : 'silhouette';
+  journal.majEtat({ mascotte: mode });
+  if (m && m.erreur) journal.erreur('mascotte : ' + String(m.erreur).slice(0, 300));
+  else journal.info('mascotte affichée : ' + mode);
+});
 
 ipcMain.handle('rechercher', (_, question) => {
   const q = String(question || '').slice(0, 300).trim();
@@ -385,6 +428,10 @@ app.whenReady().then(() => {
   if (!fenetreActive.disponible()) journal.erreur('user32 indisponible : retour du clavier approximatif');
   if (app.isPackaged) app.setLoginItemSettings({ openAtLogin: true });
   creerFenetre();
+  powerMonitor.on('suspend', () => surHorsService('veille', true));
+  powerMonitor.on('resume', () => surHorsService('veille', false));
+  powerMonitor.on('lock-screen', () => surHorsService('verrou', true));
+  powerMonitor.on('unlock-screen', () => surHorsService('verrou', false));
 
   setInterval(tickActivite, PAS_MINUTERIE_S * 1000);
   synchroniserContenu().finally(() => {

@@ -112,6 +112,9 @@
   to { height: 10px; }
 }
 
+/* Fenêtre cachée, veille, session verrouillée : plus rien ne tourne. */
+.silhouette.en-pause * { animation-play-state: paused !important; }
+
 @media (prefers-reduced-motion: reduce) {
   .silhouette * { animation: none !important; }
 }

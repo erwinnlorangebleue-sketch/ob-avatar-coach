@@ -10,9 +10,12 @@ contextBridge.exposeInMainWorld('ob', {
   rechercher: (q) => ipcRenderer.invoke('rechercher', String(q)),
   ouvrirArticle: (url) => ipcRenderer.send('ouvrir-article', String(url)),
   veilleuse: (mode) => ipcRenderer.send('veilleuse', String(mode)),
+  mascotte: (mode, erreur) => ipcRenderer.send('mascotte', { mode: String(mode), erreur: erreur ? String(erreur) : null }),
   surInit: (f) => ipcRenderer.on('init', (_, d) => f(d)),
   surOuvrirQuestion: (f) => ipcRenderer.on('ouvrir-question', () => f()),
   surFermerQuestion: (f) => ipcRenderer.on('fermer-question', () => f()),
   surCarte: (f) => ipcRenderer.on('carte', (_, c) => f(c)),
   surVeilleuse: (f) => ipcRenderer.on('veilleuse', (_, jusqua) => f(jusqua)),
+  surPause: (f) => ipcRenderer.on('pause', (_, enPause) => f(!!enPause)),
+  surSalut: (f) => ipcRenderer.on('salut', () => f()),
 });

@@ -11,8 +11,44 @@
   const elForm = document.getElementById('question-form');
   const elChamp = document.getElementById('question-champ');
   const elReponse = document.getElementById('question-reponse');
-  const avatar = window.AvatarSilhouette.monter(document.getElementById('avatar'));
-  avatar.etat('repos');
+
+  // ---------- Avatar : mascotte vidéo, ou silhouette CSS (réglage distant, ou repli sur panne) ----------
+  const elAvatar = document.getElementById('avatar');
+  const DOSSIER_MASCOTTE = '../../assets/mascotte/';
+  const SANS_AVATAR = { etat() {}, evenement() {}, contient: () => false, pause() {}, detruire() {} };
+  let avatar = SANS_AVATAR;
+  let modeAvatar = null;
+  let panneVideo = null; // message de la panne qui a imposé la silhouette, jusqu'au redémarrage
+  let enPause = true;
+
+  function monterAvatar(reglages) {
+    const voulu = reglages.mascotte === 'silhouette' || panneVideo ? 'silhouette' : 'video';
+    // Remonté aussi quand la correspondance états → clips change à distance.
+    const cle = voulu === 'video' ? 'video ' + JSON.stringify([reglages.dossier, reglages.etats]) : voulu;
+    if (cle === modeAvatar) return;
+    avatar.detruire();
+    modeAvatar = cle;
+    document.body.classList.toggle('avatar-silhouette', voulu === 'silhouette');
+    avatar = voulu === 'video'
+      ? window.AvatarMascotte.monter(elAvatar, {
+        dossier: DOSSIER_MASCOTTE + reglages.dossier,
+        etats: reglages.etats || {},
+        surErreur(message) {
+          panneVideo = message;
+          monterAvatar(reglages);
+        },
+      })
+      : window.AvatarSilhouette.monter(elAvatar);
+    avatar.pause(enPause);
+    avatar.etat(!elQuestion.hidden ? 'ecoute' : !elCarte.hidden ? 'parle' : 'repos');
+    if (!elCarte.hidden) avatar.evenement('carte');
+    ob.mascotte(voulu, voulu === 'silhouette' ? panneVideo : null);
+  }
+  ob.surPause((b) => {
+    enPause = b;
+    avatar.pause(b);
+  });
+  ob.surSalut(() => avatar.evenement('salut'));
 
   // ---------- Traversée des clics ----------
   // La fenêtre ignore les clics par défaut ; la page reçoit quand même les mouvements
@@ -25,14 +61,19 @@
     if (!elQuestion.hidden) return;
     avatar.etat(actif ? 'survol' : 'repos');
   }
+  // Sur la mascotte vidéo, seuls ses pixels opaques comptent, pas le carré de 320.
   const interactifSous = (x, y) => {
     const el = document.elementFromPoint(x, y);
-    return !!(el && el.closest('[data-interactif]'));
+    return !!(el && el.closest('[data-interactif]')) || avatar.contient(x, y);
   };
-  document.addEventListener('mousemove', (e) => majSurvol(interactifSous(e.clientX, e.clientY)));
+  document.addEventListener('mousemove', (e) => {
+    document.body.classList.toggle('sur-mascotte', avatar.contient(e.clientX, e.clientY));
+    majSurvol(interactifSous(e.clientX, e.clientY));
+  });
   // Quand la fenêtre redevient cliquable, Chromium émet un mouseleave parasite alors que le
   // curseur est toujours sur l'avatar : on ne relâche que si le point quitté n'est pas interactif.
   document.addEventListener('mouseleave', (e) => {
+    document.body.classList.remove('sur-mascotte');
     if (!interactifSous(e.clientX, e.clientY)) majSurvol(false);
   });
   // Un élément qui disparaît sous le curseur ne déclenche pas de mousemove : on relâche.
@@ -46,10 +87,16 @@
     document.querySelectorAll('[data-placeholder]').forEach((el) => { el.placeholder = t(el.dataset.placeholder); });
     document.querySelectorAll('[data-titre]').forEach((el) => { el.title = t(el.dataset.titre); });
   }
+  let premierInit = true;
   function recevoirInit(d) {
     textes = d.textes || {};
     appliquerTextes();
     majVeilleuse(d.veilleuse);
+    if (typeof d.pause === 'boolean') enPause = d.pause;
+    monterAvatar(d.mascotte || {});
+    avatar.pause(enPause);
+    if (premierInit) avatar.evenement('salut'); // bonjour
+    premierInit = false;
   }
   ob.init().then(recevoirInit);
   ob.surInit(recevoirInit);
@@ -89,10 +136,12 @@
   let restantCarte = 0;
 
   function fermerCarte() {
+    const etaitOuverte = !elCarte.hidden;
     elCarte.hidden = true;
     elChoixVeilleuse.hidden = true;
     clearInterval(minuterieCarte);
     if (elQuestion.hidden) avatar.etat('repos');
+    if (etaitOuverte) avatar.evenement('attente');
     relacherSiMasque();
   }
 
@@ -111,13 +160,17 @@
     elCarte.hidden = false;
     elCarte.scrollTop = 0;
     avatar.etat('parle');
+    avatar.evenement('carte');
     restantCarte = c.dureeS;
     clearInterval(minuterieCarte);
     minuterieCarte = setInterval(() => {
       if (!carteSurvolee && --restantCarte <= 0) fermerCarte();
     }, 1000);
   });
-  elCarte.addEventListener('mouseenter', () => { carteSurvolee = true; });
+  elCarte.addEventListener('mouseenter', () => {
+    carteSurvolee = true;
+    avatar.evenement('designer');
+  });
   elCarte.addEventListener('mouseleave', () => { carteSurvolee = false; });
   elCarte.querySelector('.bulle-fermer').addEventListener('click', fermerCarte);
 
@@ -150,17 +203,17 @@
   ob.surVeilleuse(majVeilleuse);
 
   // ---------- Question ----------
-  document.querySelectorAll('.sil-tete, .sil-corps').forEach((el) => {
-    el.addEventListener('click', () => {
-      if (elQuestion.hidden) ob.demanderQuestion();
-      else fermerQuestion();
-    });
+  elAvatar.addEventListener('click', (e) => {
+    if (!e.target.closest('[data-interactif]') && !avatar.contient(e.clientX, e.clientY)) return;
+    if (elQuestion.hidden) ob.demanderQuestion();
+    else fermerQuestion();
   });
 
   ob.surOuvrirQuestion(() => {
     elQuestion.hidden = false; // avant fermerCarte(), sinon le survol serait relâché
     fermerCarte();
     avatar.etat('ecoute');
+    avatar.evenement('ouverture');
     elChamp.focus();
     elChamp.select();
   });
@@ -171,6 +224,7 @@
     elReponse.replaceChildren();
     elChamp.value = '';
     avatar.etat('repos');
+    avatar.evenement('salut'); // au revoir
     ob.questionFermee();
     relacherSiMasque();
   }
@@ -198,13 +252,16 @@
     const q = elChamp.value.trim();
     if (!q) return;
     elReponse.replaceChildren(paragraphe('reponse-intro', t('recherche_en_cours')));
+    avatar.evenement('recherche');
     const r = await ob.rechercher(q);
+    avatar.evenement(r.etat === 'ok' ? 'article_trouve' : 'rien_trouve');
     const noeuds = [];
     if (r.etat === 'ok') {
       noeuds.push(paragraphe('reponse-intro', t('resultats_intro')));
       for (const res of r.resultats) {
         const ligne = document.createElement('div');
         ligne.className = 'resultat';
+        ligne.addEventListener('mouseenter', () => avatar.evenement('designer'));
         const texte = document.createElement('div');
         texte.className = 'resultat-texte';
         const titre = document.createElement('div');
