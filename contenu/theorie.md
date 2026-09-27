@@ -28,7 +28,7 @@ Le contrôle du tronc vient de l'action coordonnée des muscles abdominaux, dors
 
 ### A05 — Scapula à l'épaule [CONSENSUS]
 
-Quand le bras monte, l'omoplate tourne et bascule, elle ne reste pas fixe. Ne l'imposez pas bloquée en permanence ; adaptez la consigne à la tâche, au confort et aux symptômes.
+Quand le bras monte, l'omoplate (scapula) tourne et bascule, elle ne reste pas fixe. Ne l'imposez pas bloquée en permanence ; adaptez la consigne à la tâche, au confort et aux symptômes.
 
 ### A06 — Talonnettes au squat [CONSENSUS]
 
