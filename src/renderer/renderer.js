@@ -148,6 +148,8 @@
   function recevoirInit(d) {
     textes = d.textes || {};
     appliquerTextes();
+    // Version installée, pour qu'un coach puisse la lire au téléphone.
+    document.getElementById('version').textContent = [t('version'), d.version].filter(Boolean).join(' ');
     majVeilleuse(d.veilleuse);
     if (typeof d.pause === 'boolean') enPause = d.pause;
     reglagesMascotte = d.mascotte || {};

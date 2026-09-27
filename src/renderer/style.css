@@ -196,6 +196,12 @@ body.avatar-silhouette .bulle { bottom: 186px; }
   color: var(--texte-doux);
 }
 #question-reponse:not(:empty) { margin-top: 10px; }
+.version {
+  margin: 8px 0 0;
+  font-size: 10px;
+  text-align: right;
+  color: var(--texte-doux);
+}
 .reponse-intro { margin: 0 0 6px; font-weight: 600; }
 .reponse-inconnu {
   margin: 0;
