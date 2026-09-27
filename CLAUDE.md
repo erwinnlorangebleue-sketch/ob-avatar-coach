@@ -99,5 +99,6 @@ Ces registres n'ont pas la même apparence à l'écran.
   sur usage réel avant de trancher**, pas à supposer. La v1 part sans IA.
 - Identifiants des 4 clubs : à récupérer dans l'onglet `App_data` du classeur
   « Synthèse & Pilotage clubs ».
-- Modèle 3D de Yann SERVANT : pas encore produit. Il arrive en dernier, par
-  mise à jour automatique. Ne jamais bloquer une livraison en l'attendant.
+- Mascotte : demi-orange v88 en huit vidéos WebM VP9 transparentes
+  (`assets/mascotte/v88/`, états → clips dans `contenu/mascotte.json`). Silhouette
+  CSS en repli : réglage « silhouette » ou vidéo illisible. Pas de GLB dans le dépôt.
