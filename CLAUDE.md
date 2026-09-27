@@ -58,6 +58,9 @@ cliqué une fois par poste, sur place.
   erreur. Sans ça, un club tombe en panne en silence.
 - **Configuration à distance** : l'appli doit pouvoir être bridée ou mise en
   veille depuis les fichiers du dépôt, sans réinstallation.
+- **Processeur au repos ≤ 5 % d'un cœur**, fenêtre visible (Magicline tourne à
+  côté). Toute animation qui tourne recompose la fenêtre transparente à chaque
+  image : rien d'animé en permanence au repos. Mesurer par processus, 60 s.
 
 ## Règles de réponse — non négociables
 
@@ -99,6 +102,6 @@ Ces registres n'ont pas la même apparence à l'écran.
   sur usage réel avant de trancher**, pas à supposer. La v1 part sans IA.
 - Identifiants des 4 clubs : à récupérer dans l'onglet `App_data` du classeur
   « Synthèse & Pilotage clubs ».
-- Mascotte : demi-orange v88 en huit vidéos WebM VP9 transparentes
-  (`assets/mascotte/v88/`, états → clips dans `contenu/mascotte.json`). Silhouette
-  CSS en repli : réglage « silhouette » ou vidéo illisible. Pas de GLB dans le dépôt.
+- Mascotte : demi-orange v88 en huit vidéos WebM VP9 transparentes, variantes
+  320 et 640 (`assets/mascotte/v88/`), réglages dans `contenu/mascotte.json`.
+  Silhouette CSS en repli : réglage « silhouette » ou vidéo illisible. Pas de GLB.
