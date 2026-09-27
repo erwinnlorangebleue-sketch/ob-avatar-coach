@@ -1,13 +1,15 @@
 'use strict';
 // Mascotte L'Orange Bleue en vidéos WebM VP9 transparentes, affichées en taille_px × taille_px.
-// Deux variantes livrées : 320 et 640 px ; on prend la plus petite qui reste nette à l'écran.
+// Variantes livrées (160, 320, 640 px…) : on prend la plus petite qui reste nette à l'écran.
 // Une balise <video> par clip, préchargée, muette, superposées : une seule est visible.
 // On ne change jamais la source d'une balise (aucune image vide au changement de clip).
 // Tous les clips commencent et finissent sur la même pose de repos : on enchaîne sans fondu.
-// Au repos, idle joue un passage puis reste figé sur la pose un temps tiré au hasard :
-// une vidéo arrêtée ne coûte rien au processeur.
+// Un fond (idle, talk) joue ses passages puis reste figé sur la pose de repos : un temps tiré
+// au hasard pour idle, jusqu'à la fermeture de la carte pour talk. Une vidéo arrêtée ne coûte
+// rien au processeur.
 // Interface commune à tout avatar : etat() (vocabulaire de la silhouette, ignoré ici),
-// evenement(nom) (états de contenu/mascotte.json), contient(x, y), pause(b), detruire().
+// evenement(nom) (états de contenu/mascotte.json), contient(x, y), pause(b), activite(),
+// variante, detruire(). surChangement() est appelé quand activite() peut avoir changé.
 
 (function () {
   const TYPE = 'video/webm; codecs="vp9"';
@@ -17,22 +19,25 @@
 
   const R = window.ReglesMascotte;
 
-  function monter(conteneur, { dossier, reglages, surErreur }) {
+  function monter(conteneur, { dossier, reglages, surErreur, surChangement = () => {} }) {
     const etats = reglages.etats || {};
     // Invisible tant que le premier clip n'a pas son image : ni carré vide, ni image noire.
     conteneur.classList.add('mascotte', 'en-chargement');
     const ombre = document.createElement('div');
     ombre.className = 'mascotte-ombre';
     conteneur.append(ombre);
-    const cote = R.variante(R.taille(reglages), window.devicePixelRatio);
+    const cote = R.variante(R.taille(reglages), window.devicePixelRatio, reglages.variantes);
     const dossierClips = `${dossier}/${cote}`;
     conteneur.dataset.variante = cote;
 
     const videos = {};
     let courant = null;
     let fond = null; // clip en boucle sur lequel on revient : idle, ou talk tant qu'une carte est ouverte
+    let etatFond = null; // son état dans mascotte.json : passages, repos_s
+    let passagesFaits = 0; // passages du fond depuis qu'il l'est devenu, ou depuis son dernier repos
+    let fige = false; // clip courant arrêté sur la pose de repos
     let enPause = true;
-    let minuterieRepos = null; // idle figé sur la pose, en attente du prochain passage
+    let minuterieRepos = null; // fond figé, en attente de son prochain passage
     let masque = null;
     let echoue = false;
     let minuterieChargement = null;
@@ -53,17 +58,33 @@
       setTimeout(() => echec('lecture WebM VP9 impossible sur ce poste'));
     }
 
+    // Le fond reste sur la pose de repos ; il repart après reposMs, ou jamais (null) tant que
+    // l'état ne change pas.
+    function figer(reposMs) {
+      fige = true;
+      if (reposMs != null) {
+        minuterieRepos = setTimeout(() => {
+          minuterieRepos = null;
+          passagesFaits = 0;
+          jouer(fond);
+        }, reposMs);
+      }
+      surChangement();
+    }
+
+    function revenirAuFond() {
+      if (passagesFaits < R.passages(etatFond)) return jouer(fond);
+      jouer(fond, { figee: true }); // passages épuisés : la pose, sans les rejouer
+      figer(R.dureeRepos(etatFond));
+    }
+
     function finDeClip(nom) {
       if (courant !== nom) return;
-      // Fin d'un passage d'idle : on reste sur la dernière image (la pose de repos).
-      if (nom === fond && nom === clipAttente) {
-        const ms = R.dureeRepos(reglages);
-        if (ms > 0) {
-          minuterieRepos = setTimeout(() => { minuterieRepos = null; jouer(fond); }, ms);
-          return;
-        }
-      }
-      jouer(fond); // clip joué une fois → fond ; talk → il repart
+      if (nom !== fond) return revenirAuFond(); // clip joué une fois
+      passagesFaits++;
+      const suite = R.apresPassage(etatFond, passagesFaits);
+      if (suite.rejouer) jouer(fond);
+      else figer(suite.reposMs); // la dernière image est la pose de repos
     }
 
     for (const nom of clips) {
@@ -116,11 +137,12 @@
       });
     }
 
-    function jouer(nom) {
+    function jouer(nom, { figee = false } = {}) {
       const v = videos[nom];
       if (!v || echoue) return;
       clearTimeout(minuterieRepos);
       minuterieRepos = null;
+      fige = figee;
       const ancien = courant && videos[courant];
       courant = nom;
       conteneur.dataset.clip = nom;
@@ -133,10 +155,12 @@
         ancien.pause();
         ancien.currentTime = 0; // prêt, caché, pour son prochain départ
       }
-      if (!enPause) lancer(v);
+      if (!enPause && !figee) lancer(v);
+      surChangement();
     }
 
     fond = clipAttente;
+    etatFond = etats.attente;
     jouer(fond);
 
     return {
@@ -144,8 +168,12 @@
       evenement(nom) {
         const e = etats[nom];
         if (!e || !videos[e.clip]) return;
-        if (e.boucle) fond = e.clip;
-        // Déjà en cours : on ne le relance pas. idle figé sur la pose compte comme en cours.
+        if (e.boucle && e.clip !== fond) {
+          fond = e.clip;
+          etatFond = e;
+          passagesFaits = 0;
+        }
+        // Déjà en cours : on ne le relance pas. Un fond figé sur la pose compte comme en cours.
         if (courant === e.clip) return;
         jouer(e.clip);
       },
@@ -160,10 +188,20 @@
       pause(b) {
         enPause = !!b;
         const v = courant && videos[courant];
-        if (!v || minuterieRepos) return; // idle figé : rien ne tourne, le repos suit son cours
-        if (enPause) v.pause();
-        else lancer(v);
+        if (v && !fige) { // figé : rien ne tourne, le repos suit son cours
+          if (enPause) v.pause();
+          else lancer(v);
+        }
+        surChangement();
       },
+      // attente : cycle d'attente (idle, joué ou figé) ; lecture : une vidéo tourne.
+      activite() {
+        return {
+          attente: courant === clipAttente && fond === clipAttente,
+          lecture: !!courant && !fige && !enPause && !echoue,
+        };
+      },
+      variante: cote,
       detruire() {
         echoue = true;
         clearTimeout(minuterieChargement);

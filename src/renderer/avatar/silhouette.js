@@ -3,10 +3,14 @@
 // de la mascotte ne se lit pas, le réglage « silhouette » de contenu/mascotte.json, et le mode
 // léger des vieux postes.
 // Interface commune à tout avatar : monter(conteneur) puis etat('repos' | 'survol' | 'ecoute' | 'parle'),
-// evenement(nom) (clips de la mascotte, ignorés ici), contient(x, y), pause(b), detruire().
+// evenement(nom) (clips de la mascotte, ignorés ici), contient(x, y), pause(b), activite(),
+// variante, detruire(). surChangement() est appelé quand activite() peut avoir changé.
+// Immobile à l'état repos (voir silhouette.css) : elle ne s'anime qu'hors attente.
 
 (function () {
-  function monter(conteneur) {
+  function monter(conteneur, { surChangement = () => {} } = {}) {
+    let etat = 'repos';
+    let enPause = false;
     conteneur.classList.add('silhouette');
     conteneur.innerHTML = `
       <div class="sil-ombre"></div>
@@ -18,13 +22,21 @@
       </div>`;
     return {
       etat(nom) {
+        etat = nom;
         conteneur.dataset.etat = nom;
+        surChangement();
       },
       evenement() {},
       contient: () => false, // tête et corps portent data-interactif : pas besoin de masque
       pause(b) {
-        conteneur.classList.toggle('en-pause', !!b);
+        enPause = !!b;
+        conteneur.classList.toggle('en-pause', enPause);
+        surChangement();
       },
+      activite() {
+        return { attente: etat === 'repos', lecture: etat !== 'repos' && !enPause };
+      },
+      variante: null,
       detruire() {
         conteneur.replaceChildren();
         conteneur.classList.remove('silhouette', 'en-pause');

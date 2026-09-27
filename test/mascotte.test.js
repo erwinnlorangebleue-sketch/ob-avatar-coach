@@ -17,7 +17,11 @@ test('mascotte.json : mode connu, tous les états ont un clip, réglages présen
   assert.strictEqual(reglages.etats.accueil.clip, 'greet');
   assert.strictEqual(reglages.etats.au_revoir.clip, 'wave');
   assert.strictEqual(reglages.taille_px, 160);
-  assert.deepStrictEqual(reglages.attente_repos_s, { min_s: 8, max_s: 20 });
+  assert.deepStrictEqual(reglages.variantes, [160, 320, 640]);
+  assert.strictEqual(reglages.etats.attente.passages, 1);
+  assert.deepStrictEqual(reglages.etats.attente.repos_s, { min_s: 20, max_s: 40 });
+  assert.strictEqual(reglages.etats.carte.passages, 2);
+  assert.strictEqual(reglages.etats.carte.repos_s, undefined, 'talk ne repart pas tant que la carte est ouverte');
   assert.strictEqual(reglages.au_revoir_intervalle_min, 10);
   assert.strictEqual(reglages.recherche_seuil_ms, 300);
 });
@@ -44,13 +48,18 @@ test('la page n\'émet que des états définis, et plus ouverture ni salut', () 
   assert.ok(!emis.has('ouverture') && !emis.has('salut'));
 });
 
-test('variante : 320 tant que taille × ratio de pixels ≤ 320, sinon 640', () => {
-  assert.strictEqual(R.variante(160, 1), 320);
-  assert.strictEqual(R.variante(160, 2), 320);
-  assert.strictEqual(R.variante(160, 2.5), 640);
-  assert.strictEqual(R.variante(320, 1), 320);
-  assert.strictEqual(R.variante(321, 1), 640);
-  assert.strictEqual(R.variante(160, undefined), 320);
+test('variante : la plus petite qui couvre taille × ratio de pixels, sinon la plus grande', () => {
+  const v = reglages.variantes;
+  assert.strictEqual(R.variante(160, 1, v), 160);
+  assert.strictEqual(R.variante(160, 1.25, v), 320);
+  assert.strictEqual(R.variante(160, 2, v), 320);
+  assert.strictEqual(R.variante(160, 2.5, v), 640);
+  assert.strictEqual(R.variante(320, 1, v), 320);
+  assert.strictEqual(R.variante(321, 1, v), 640);
+  assert.strictEqual(R.variante(640, 2, v), 640);
+  assert.strictEqual(R.variante(160, undefined, v), 160);
+  assert.strictEqual(R.variante(160, 1, [640, '320']), 320, 'ordre et type indifférents');
+  assert.strictEqual(R.variante(160, 1, undefined), 320, 'sans liste : 320 et 640');
 });
 
 test('taille : 160 par défaut, bornée entre 80 et 640', () => {
@@ -61,14 +70,31 @@ test('taille : 160 par défaut, bornée entre 80 et 640', () => {
   assert.strictEqual(R.taille(reglages), 160);
 });
 
-test('repos d\'idle tiré entre 8 et 20 s', () => {
-  assert.strictEqual(R.dureeRepos(reglages, () => 0), 8000);
-  assert.strictEqual(R.dureeRepos(reglages, () => 0.999999), 20000);
+test('idle : un passage puis immobile 20 à 40 s, puis il repart', () => {
+  const idle = reglages.etats.attente;
+  assert.deepStrictEqual(R.apresPassage(idle, 1, () => 0), { rejouer: false, reposMs: 20000 });
+  assert.deepStrictEqual(R.apresPassage(idle, 1, () => 0.999999), { rejouer: false, reposMs: 40000 });
   for (let i = 0; i < 200; i++) {
-    const ms = R.dureeRepos(reglages);
-    assert.ok(ms >= 8000 && ms <= 20000, String(ms));
+    const { reposMs } = R.apresPassage(idle, 1);
+    assert.ok(reposMs >= 20000 && reposMs <= 40000, String(reposMs));
   }
-  assert.strictEqual(R.dureeRepos({}, () => 0.5), 0, 'sans réglage : pas de repos');
+});
+
+test('talk : deux passages puis immobile jusqu\'à la fermeture de la carte', () => {
+  const talk = reglages.etats.carte;
+  assert.deepStrictEqual(R.apresPassage(talk, 1), { rejouer: true });
+  assert.deepStrictEqual(R.apresPassage(talk, 2), { rejouer: false, reposMs: null });
+  assert.deepStrictEqual(R.apresPassage(talk, 3), { rejouer: false, reposMs: null });
+});
+
+test('fond sans passages : il tourne tant que l\'état dure ; réglages erronés bornés', () => {
+  assert.strictEqual(R.passages({ clip: 'x', boucle: true }), Infinity);
+  assert.deepStrictEqual(R.apresPassage({ clip: 'x', boucle: true }, 1000), { rejouer: true });
+  assert.strictEqual(R.passages({ passages: 0 }), Infinity);
+  assert.strictEqual(R.passages({ passages: '2' }), 2);
+  assert.strictEqual(R.dureeRepos({ repos_s: { min_s: 30, max_s: 10 } }, () => 0.5), 30000, 'max < min');
+  assert.strictEqual(R.dureeRepos({ repos_s: {} }, () => 0.5), 0);
+  assert.strictEqual(R.dureeRepos({}), null);
 });
 
 test('think seulement après le seuil de 300 ms', () => {

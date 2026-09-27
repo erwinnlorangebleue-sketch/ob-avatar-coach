@@ -15,20 +15,25 @@
   // ---------- Avatar : mascotte vidéo, ou silhouette CSS (réglage distant, ou repli sur panne) ----------
   const elAvatar = document.getElementById('avatar');
   const DOSSIER_MASCOTTE = '../../assets/mascotte/';
-  const SANS_AVATAR = { etat() {}, evenement() {}, contient: () => false, pause() {}, detruire() {} };
+  const SANS_AVATAR = {
+    etat() {}, evenement() {}, contient: () => false, pause() {}, activite: () => ({}), variante: null, detruire() {},
+  };
   let avatar = SANS_AVATAR;
   let modeAvatar = null;
   let panneVideo = null; // message de la panne qui a imposé la silhouette, jusqu'au redémarrage
   let enPause = true;
   let reglagesMascotte = {};
+  let modeAffiche = null; // video ou silhouette, une fois monté
+  let phaseSignalee = '';
 
   function monterAvatar(reglages) {
     const voulu = reglages.mascotte === 'silhouette' || panneVideo ? 'silhouette' : 'video';
     // Remonté aussi quand la correspondance états → clips change à distance.
     const cle = voulu === 'video'
-      ? 'video ' + JSON.stringify([reglages.dossier, reglages.etats, reglages.taille_px, reglages.attente_repos_s])
+      ? 'video ' + JSON.stringify([reglages.dossier, reglages.variantes, reglages.etats, reglages.taille_px])
       : voulu;
     if (cle === modeAvatar) return;
+    modeAffiche = null; // pas de phase signalée pendant le remontage
     avatar.detruire();
     modeAvatar = cle;
     document.body.classList.toggle('avatar-silhouette', voulu === 'silhouette');
@@ -41,13 +46,34 @@
           panneVideo = message;
           monterAvatar(reglages);
         },
+        surChangement: signalerPhase,
       })
-      : window.AvatarSilhouette.monter(elAvatar);
+      : window.AvatarSilhouette.monter(elAvatar, { surChangement: signalerPhase });
+    modeAffiche = voulu;
     avatar.pause(enPause);
     avatar.etat(!elQuestion.hidden ? 'ecoute' : !elCarte.hidden ? 'parle' : 'repos');
     if (!elCarte.hidden) avatar.evenement('carte');
     ob.mascotte(voulu, voulu === 'silhouette' ? panneVideo : null);
+    signalerPhase();
   }
+
+  // ---------- Phase, pour la mesure du processeur (processus principal) ----------
+  // attente : aucune bulle, mascotte dans son cycle d'attente ; lecture : une animation tourne
+  // hors attente ; autre : ni l'un ni l'autre (bulle ouverte, mascotte immobile), non mesuré.
+  function signalerPhase() {
+    if (!modeAffiche) return;
+    const a = avatar.activite();
+    const phase = elQuestion.hidden && elCarte.hidden && a.attente ? 'attente' : a.lecture ? 'lecture' : 'autre';
+    const p = { phase, mode: modeAffiche, variante: avatar.variante };
+    const cle = JSON.stringify(p);
+    if (cle === phaseSignalee) return;
+    phaseSignalee = cle;
+    ob.phase(p);
+  }
+  // Une bulle qui s'ouvre ou se ferme change la phase, même sans changer de clip.
+  const observateurBulles = new MutationObserver(() => signalerPhase());
+  for (const el of [elCarte, elQuestion]) observateurBulles.observe(el, { attributes: true, attributeFilter: ['hidden'] });
+
   // ---------- Taille de la fenêtre : jamais plus grande que ce qu'elle affiche ----------
   // Tout est ancré en bas à droite : la page mesure l'étendue des éléments visibles (bulles
   // comprises quand elles sont ouvertes) et le processus principal redimensionne la fenêtre

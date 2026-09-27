@@ -7,6 +7,7 @@
   const TAILLE_DEFAUT = 160;
   const TAILLE_MIN = 80;
   const TAILLE_MAX = 640;
+  const VARIANTES_DEFAUT = [320, 640];
 
   // Côté affiché, en pixels CSS, borné pour qu'un réglage erroné ne casse pas l'écran.
   function taille(reglages) {
@@ -14,17 +15,36 @@
     return Math.min(TAILLE_MAX, Math.max(TAILLE_MIN, t > 0 ? t : TAILLE_DEFAUT));
   }
 
-  // Variante vidéo : 320 si elle couvre les pixels réels de l'écran, sinon 640.
-  function variante(taillePx, ratioPixels) {
-    return taillePx * (ratioPixels || 1) <= 320 ? 320 : 640;
+  // Variante vidéo : la plus petite qui couvre les pixels réels de l'écran, sinon la plus grande.
+  function variante(taillePx, ratioPixels, variantes) {
+    const liste = (Array.isArray(variantes) ? variantes : []).map(Number).filter((v) => v > 0).sort((a, b) => a - b);
+    if (!liste.length) liste.push(...VARIANTES_DEFAUT);
+    const besoin = taillePx * (ratioPixels || 1);
+    return liste.find((v) => besoin <= v) || liste[liste.length - 1];
   }
 
-  // Immobilité d'idle sur la pose de repos, tirée entre min_s et max_s, en ms.
-  function dureeRepos(reglages, aleatoire = Math.random) {
-    const r = (reglages && reglages.attente_repos_s) || {};
+  // Passages d'un fond (état en boucle) avant de s'immobiliser sur la pose de repos.
+  // Sans réglage : il tourne tant que l'état dure.
+  function passages(etat) {
+    const n = Math.floor(Number(etat && etat.passages));
+    return n >= 1 ? n : Infinity;
+  }
+
+  // Immobilité sur la pose de repos, tirée entre repos_s.min_s et max_s, en ms.
+  // null : pas de reprise, le fond reste immobile jusqu'au changement d'état.
+  function dureeRepos(etat, aleatoire = Math.random) {
+    const r = etat && etat.repos_s;
+    if (!r) return null;
     const min = Math.max(0, Number(r.min_s) || 0);
     const max = Math.max(min, Number(r.max_s) || 0);
     return Math.round((min + aleatoire() * (max - min)) * 1000);
+  }
+
+  // Fin d'un passage du fond : on le rejoue tant qu'il reste des passages, sinon on reste sur
+  // la pose (reposMs, ou null jusqu'au changement d'état). Une vidéo arrêtée ne coûte rien.
+  function apresPassage(etat, passagesFaits, aleatoire) {
+    if (passagesFaits < passages(etat)) return { rejouer: true };
+    return { rejouer: false, reposMs: dureeRepos(etat, aleatoire) };
   }
 
   // think seulement si la recherche dure plus que ce seuil (ms).
@@ -45,7 +65,7 @@
     };
   }
 
-  const R = { taille, variante, dureeRepos, seuilRecherche, limiteurAuRevoir };
+  const R = { taille, variante, passages, dureeRepos, apresPassage, seuilRecherche, limiteurAuRevoir };
   if (typeof module !== 'undefined' && module.exports) module.exports = R;
   else racine.ReglesMascotte = R;
 })(this);
