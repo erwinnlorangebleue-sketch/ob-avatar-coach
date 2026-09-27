@@ -194,11 +194,13 @@
         }
         surChangement();
       },
-      // attente : cycle d'attente (idle, joué ou figé) ; lecture : une vidéo tourne.
+      // attente : cycle d'attente (idle, joué ou figé) ; lecture : une vidéo tourne, et laquelle.
       activite() {
+        const lecture = !!courant && !fige && !enPause && !echoue;
         return {
           attente: courant === clipAttente && fond === clipAttente,
-          lecture: !!courant && !fige && !enPause && !echoue,
+          lecture,
+          clip: lecture ? courant : null,
         };
       },
       variante: cote,

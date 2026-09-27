@@ -142,9 +142,10 @@ function envoyerPause() {
   changerPhaseProcesseur();
 }
 
-// Télémétrie : moyenne processeur sur 5 min, en attente et en lecture (voir processeur.js).
+// Télémétrie : moyenne processeur en attente (5 min) et en lecture (60 s), maximum par clip
+// (voir processeur.js).
 // Rien d'autre que des mesures du poste : aucune donnée d'adhérent.
-let phaseMascotte = { phase: 'autre', mode: null, variante: null };
+let phaseMascotte = { phase: 'autre', mode: null, variante: null, clip: null };
 const releveProcesseur = creerReleveProcesseur({
   lireMetriques: () => app.getAppMetrics(),
   surMoyenne(phase, mesure) {
@@ -340,6 +341,7 @@ ipcMain.on('phase', (_, p) => {
     phase: ['attente', 'lecture'].includes(p && p.phase) ? p.phase : 'autre',
     mode: p && p.mode === 'video' ? 'video' : 'silhouette',
     variante: Number(p && p.variante) || null,
+    clip: p && /^[a-z0-9_-]{1,32}$/.test(p.clip) ? p.clip : null,
   };
   changerPhaseProcesseur();
 });

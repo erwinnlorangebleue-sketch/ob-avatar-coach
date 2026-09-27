@@ -13,7 +13,7 @@ contextBridge.exposeInMainWorld('ob', {
   veilleuse: (mode) => ipcRenderer.send('veilleuse', String(mode)),
   mascotte: (mode, erreur) => ipcRenderer.send('mascotte', { mode: String(mode), erreur: erreur ? String(erreur) : null }),
   phase: (p) => ipcRenderer.send('phase', {
-    phase: String(p.phase), mode: String(p.mode), variante: Number(p.variante) || null,
+    phase: String(p.phase), mode: String(p.mode), variante: Number(p.variante) || null, clip: p.clip ? String(p.clip) : null,
   }),
   surInit: (f) => ipcRenderer.on('init', (_, d) => f(d)),
   surOuvrirQuestion: (f) => ipcRenderer.on('ouvrir-question', () => f()),

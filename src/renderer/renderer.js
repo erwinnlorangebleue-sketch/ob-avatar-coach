@@ -64,7 +64,7 @@
     if (!modeAffiche) return;
     const a = avatar.activite();
     const phase = elQuestion.hidden && elCarte.hidden && a.attente ? 'attente' : a.lecture ? 'lecture' : 'autre';
-    const p = { phase, mode: modeAffiche, variante: avatar.variante };
+    const p = { phase, mode: modeAffiche, variante: avatar.variante, clip: a.clip || null };
     const cle = JSON.stringify(p);
     if (cle === phaseSignalee) return;
     phaseSignalee = cle;
