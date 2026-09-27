@@ -105,3 +105,5 @@ Ces registres n'ont pas la même apparence à l'écran.
 - Mascotte : demi-orange v88 en huit vidéos WebM VP9 transparentes, variantes
   320 et 640 (`assets/mascotte/v88/`), réglages dans `contenu/mascotte.json`.
   Silhouette CSS en repli : réglage « silhouette » ou vidéo illisible. Pas de GLB.
+  Nouvelle version : `npm run encoder-mascotte -- "<PNG masters>" v89`, puis
+  `"dossier": "v89"` dans le JSON. Jamais d'encodage à la main.
