@@ -17,7 +17,7 @@ test('mascotte.json : mode connu, tous les états ont un clip, réglages présen
   assert.strictEqual(reglages.etats.accueil.clip, 'greet');
   assert.strictEqual(reglages.etats.au_revoir.clip, 'wave');
   assert.strictEqual(reglages.taille_px, 160);
-  assert.deepStrictEqual(reglages.variantes, [160, 320, 640]);
+  assert.deepStrictEqual(reglages.variantes, [320, 640], '160 retirée : gain de lecture 28 % < 30 %');
   assert.strictEqual(reglages.etats.attente.passages, 1);
   assert.deepStrictEqual(reglages.etats.attente.repos_s, { min_s: 20, max_s: 40 });
   assert.strictEqual(reglages.etats.carte.passages, 2);
@@ -49,7 +49,7 @@ test('la page n\'émet que des états définis, et plus ouverture ni salut', () 
 });
 
 test('variante : la plus petite qui couvre taille × ratio de pixels, sinon la plus grande', () => {
-  const v = reglages.variantes;
+  const v = [160, 320, 640];
   assert.strictEqual(R.variante(160, 1, v), 160);
   assert.strictEqual(R.variante(160, 1.25, v), 320);
   assert.strictEqual(R.variante(160, 2, v), 320);
@@ -60,6 +60,7 @@ test('variante : la plus petite qui couvre taille × ratio de pixels, sinon la p
   assert.strictEqual(R.variante(160, undefined, v), 160);
   assert.strictEqual(R.variante(160, 1, [640, '320']), 320, 'ordre et type indifférents');
   assert.strictEqual(R.variante(160, 1, undefined), 320, 'sans liste : 320 et 640');
+  assert.strictEqual(R.variante(R.taille(reglages), 1, reglages.variantes), 320, 'config livrée à 160 px');
 });
 
 test('taille : 160 par défaut, bornée entre 80 et 640', () => {

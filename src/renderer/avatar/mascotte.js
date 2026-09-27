@@ -1,6 +1,6 @@
 'use strict';
 // Mascotte L'Orange Bleue en vidéos WebM VP9 transparentes, affichées en taille_px × taille_px.
-// Variantes livrées (160, 320, 640 px…) : on prend la plus petite qui reste nette à l'écran.
+// Variantes livrées (mascotte.json, variantes) : on prend la plus petite qui reste nette à l'écran.
 // Une balise <video> par clip, préchargée, muette, superposées : une seule est visible.
 // On ne change jamais la source d'une balise (aucune image vide au changement de clip).
 // Tous les clips commencent et finissent sur la même pose de repos : on enchaîne sans fondu.
