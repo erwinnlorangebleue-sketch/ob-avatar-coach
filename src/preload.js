@@ -6,6 +6,7 @@ contextBridge.exposeInMainWorld('ob', {
   init: () => ipcRenderer.invoke('init'),
   survol: (actif) => ipcRenderer.send('survol', !!actif),
   demanderQuestion: () => ipcRenderer.send('demander-question'),
+  taille: (largeur, hauteur) => ipcRenderer.send('taille', Number(largeur), Number(hauteur)),
   questionFermee: () => ipcRenderer.send('question-fermee'),
   rechercher: (q) => ipcRenderer.invoke('rechercher', String(q)),
   ouvrirArticle: (url) => ipcRenderer.send('ouvrir-article', String(url)),
@@ -17,5 +18,5 @@ contextBridge.exposeInMainWorld('ob', {
   surCarte: (f) => ipcRenderer.on('carte', (_, c) => f(c)),
   surVeilleuse: (f) => ipcRenderer.on('veilleuse', (_, jusqua) => f(jusqua)),
   surPause: (f) => ipcRenderer.on('pause', (_, enPause) => f(!!enPause)),
-  surSalut: (f) => ipcRenderer.on('salut', () => f()),
+  surReveil: (f) => ipcRenderer.on('reveil', () => f()),
 });

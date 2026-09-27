@@ -1,12 +1,12 @@
-/* Mascotte vidéo : zone de 320 × 320 (vidéo 640 réduite de moitié) en bas à droite.
+/* Mascotte vidéo : carré de --taille-mascotte (taille_px de contenu/mascotte.json) en bas à droite.
    Le carré ne capte rien de lui-même : renderer.js teste le masque d'opacité de repos.png. */
 
 .mascotte {
   position: fixed;
-  right: 30px;
+  right: 0;
   bottom: 0;
-  width: 320px;
-  height: 320px;
+  width: var(--taille-mascotte);
+  height: var(--taille-mascotte);
 }
 
 .mascotte-clip {
@@ -19,18 +19,20 @@
 }
 /* Opacité plutôt que display/visibility : le clip caché garde son image prête à l'écran. */
 .mascotte-clip.visible { opacity: 1; }
+/* Premier chargement : rien tant que le clip affiché n'a pas son image (voir mascotte.js). */
+.mascotte.en-chargement { visibility: hidden; }
 
-/* Ombre au sol : pieds entre 27 % et 73 % de la largeur, posés à 94 % de la hauteur. */
+/* Ombre au sol : pieds entre 27 % et 73 % de la largeur, posés à 94 % de la hauteur.
+   Proportions relevées sur repos.png ; tout suit la taille, flou compris, sans déborder du carré. */
 .mascotte-ombre {
   position: absolute;
-  left: 50%;
-  top: 94%;
-  width: 170px;
-  height: 18px;
-  margin: -9px 0 0 -85px;
+  left: 23.5%;
+  width: 53%;
+  top: calc(94% - var(--taille-mascotte) * 0.028);
+  height: calc(var(--taille-mascotte) * 0.056);
   border-radius: 50%;
   background: rgba(10, 31, 68, 0.28);
-  filter: blur(5px);
+  filter: blur(calc(var(--taille-mascotte) * 0.012));
   pointer-events: none;
 }
 

@@ -13,9 +13,11 @@ const R = require('./recherche');
 const fenetreActive = require('./fenetre-active');
 const veilleuse = require('./veilleuse');
 
-// Zone de la mascotte : 320 × 320 en bas à droite, bulles au-dessus (voir style.css).
-const LARGEUR = 400;
-const HAUTEUR = 700;
+// La fenêtre épouse ce que la page affiche (IPC « taille »), ancrée en bas à droite :
+// jamais plus grande que la mascotte, ou que la mascotte et sa bulle quand elle est ouverte.
+// Taille de départ : avant la première mesure de la page. Largeur plafonnée : bulles comprises.
+const TAILLE_DEPART = { largeur: 200, hauteur: 200 };
+const LARGEUR_MAX = 400;
 const PAS_MINUTERIE_S = 5;
 const DELAI_RESEAU_MS = 20000;
 const ORIGINE_CENTRE_AIDE = 'https://support.lorangebleue.fr';
@@ -35,6 +37,7 @@ let raccourciEnregistre = null;
 let secondesActives = 0;
 let majPrete = false;
 let derniereSynchroArticlesEchouee = false;
+let taille = { ...TAILLE_DEPART };
 const horsService = { veille: false, verrou: false }; // veille système, session verrouillée
 // Veilleuse des cartes choisie par le coach : dans etat.json, donc conservée au redémarrage
 // et visible dans la télémétrie du poste.
@@ -63,6 +66,11 @@ const contenu = creerContenu({
   journal,
   telecharger,
 });
+
+// Accélération matérielle coupée par défaut : une fenêtre transparente composée par le GPU
+// doit être relue en mémoire à chaque image, ce qui coûte plus que la composition logicielle
+// (mesuré : ~6 points d'un cœur en vidéo). Réactivable à distance ; effet au redémarrage.
+if (contenu.charger().config.acceleration_materielle !== true) app.disableHardwareAcceleration();
 
 const centreAide = creerCentreAide({
   dossier: dossierDonnees,
@@ -130,33 +138,35 @@ function envoyerPause() {
   if (fenetre) fenetre.webContents.send('pause', animationsEnPause());
 }
 
-function saluer() {
-  if (fenetre && !animationsEnPause()) fenetre.webContents.send('salut');
+function accueillir() {
+  if (fenetre && !animationsEnPause()) fenetre.webContents.send('reveil');
 }
 
 function surHorsService(cle, actif) {
   const avant = animationsEnPause();
   horsService[cle] = actif;
   envoyerPause();
-  if (avant && !animationsEnPause()) saluer(); // sortie de veille
+  if (avant && !animationsEnPause()) accueillir(); // sortie de veille
 }
 
 // ---------- Fenêtre ----------
 
 function positionner() {
   const zone = screen.getPrimaryDisplay().workArea;
+  const largeur = Math.min(taille.largeur, LARGEUR_MAX, zone.width);
+  const hauteur = Math.min(taille.hauteur, zone.height);
   fenetre.setBounds({
-    x: zone.x + zone.width - LARGEUR,
-    y: zone.y + zone.height - HAUTEUR,
-    width: LARGEUR,
-    height: HAUTEUR,
+    x: zone.x + zone.width - largeur,
+    y: zone.y + zone.height - hauteur,
+    width: largeur,
+    height: hauteur,
   });
 }
 
 function creerFenetre() {
   fenetre = new BrowserWindow({
-    width: LARGEUR,
-    height: HAUTEUR,
+    width: taille.largeur,
+    height: taille.hauteur,
     show: false,
     frame: false,
     transparent: true,
@@ -216,7 +226,7 @@ function appliquerVeille() {
   } else if (!fenetre.isVisible() && fenetre.webContents.getURL()) {
     fenetre.showInactive();
     journal.info('sortie de veille à distance');
-    saluer();
+    accueillir();
   }
 }
 
@@ -285,6 +295,14 @@ ipcMain.on('survol', (_, actif) => {
 });
 
 ipcMain.on('demander-question', () => ouvrirQuestion());
+ipcMain.on('taille', (_, largeur, hauteur) => {
+  const l = Math.round(Number(largeur));
+  const h = Math.round(Number(hauteur));
+  if (!fenetre || !(l > 0) || !(h > 0)) return;
+  if (l === taille.largeur && h === taille.hauteur) return;
+  taille = { largeur: l, hauteur: h };
+  positionner();
+});
 ipcMain.on('veilleuse', (_, mode) => reglerVeilleuse(veilleuse.MODES.includes(mode) ? mode : null));
 ipcMain.on('question-fermee', () => fermerQuestion());
 // Mode réellement affiché (vidéo ou silhouette) et, s'il y en a une, la panne qui l'a imposé.

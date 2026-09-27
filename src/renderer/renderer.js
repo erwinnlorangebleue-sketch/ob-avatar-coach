@@ -20,19 +20,23 @@
   let modeAvatar = null;
   let panneVideo = null; // message de la panne qui a imposé la silhouette, jusqu'au redémarrage
   let enPause = true;
+  let reglagesMascotte = {};
 
   function monterAvatar(reglages) {
     const voulu = reglages.mascotte === 'silhouette' || panneVideo ? 'silhouette' : 'video';
     // Remonté aussi quand la correspondance états → clips change à distance.
-    const cle = voulu === 'video' ? 'video ' + JSON.stringify([reglages.dossier, reglages.etats]) : voulu;
+    const cle = voulu === 'video'
+      ? 'video ' + JSON.stringify([reglages.dossier, reglages.etats, reglages.taille_px, reglages.attente_repos_s])
+      : voulu;
     if (cle === modeAvatar) return;
     avatar.detruire();
     modeAvatar = cle;
     document.body.classList.toggle('avatar-silhouette', voulu === 'silhouette');
+    document.documentElement.style.setProperty('--taille-mascotte', ReglesMascotte.taille(reglages) + 'px');
     avatar = voulu === 'video'
       ? window.AvatarMascotte.monter(elAvatar, {
         dossier: DOSSIER_MASCOTTE + reglages.dossier,
-        etats: reglages.etats || {},
+        reglages,
         surErreur(message) {
           panneVideo = message;
           monterAvatar(reglages);
@@ -44,11 +48,38 @@
     if (!elCarte.hidden) avatar.evenement('carte');
     ob.mascotte(voulu, voulu === 'silhouette' ? panneVideo : null);
   }
+  // ---------- Taille de la fenêtre : jamais plus grande que ce qu'elle affiche ----------
+  // Tout est ancré en bas à droite : la page mesure l'étendue des éléments visibles (bulles
+  // comprises quand elles sont ouvertes) et le processus principal redimensionne la fenêtre
+  // en gardant ce coin fixe. Rien d'invisible ne reste posé sur les autres applications.
+  const MARGE_OMBRE_BULLE = 24;
+  let tailleDemandee = '';
+  function ajusterFenetre() {
+    let gauche = window.innerWidth;
+    let haut = window.innerHeight;
+    // Positions de mise en page (offset*) : l'animation d'entrée des bulles ne compte pas.
+    // Les bulles gardent la place de leur ombre portée (box-shadow de .bulle).
+    for (const el of [elAvatar, elCarte, elQuestion]) {
+      if (el.hidden || !el.offsetWidth || !el.offsetHeight) continue;
+      const marge = el === elAvatar ? 0 : MARGE_OMBRE_BULLE;
+      gauche = Math.min(gauche, el.offsetLeft - marge);
+      haut = Math.min(haut, el.offsetTop - marge);
+    }
+    const largeur = Math.ceil(window.innerWidth - gauche);
+    const hauteur = Math.ceil(window.innerHeight - haut);
+    const cle = largeur + 'x' + hauteur;
+    if (cle === tailleDemandee || largeur <= 0 || hauteur <= 0) return;
+    tailleDemandee = cle;
+    ob.taille(largeur, hauteur);
+  }
+  const observateur = new ResizeObserver(() => ajusterFenetre());
+  for (const el of [elAvatar, elCarte, elQuestion]) observateur.observe(el);
+
   ob.surPause((b) => {
     enPause = b;
     avatar.pause(b);
   });
-  ob.surSalut(() => avatar.evenement('salut'));
+  ob.surReveil(() => avatar.evenement('accueil')); // sortie de veille
 
   // ---------- Traversée des clics ----------
   // La fenêtre ignore les clics par défaut ; la page reçoit quand même les mouvements
@@ -61,7 +92,7 @@
     if (!elQuestion.hidden) return;
     avatar.etat(actif ? 'survol' : 'repos');
   }
-  // Sur la mascotte vidéo, seuls ses pixels opaques comptent, pas le carré de 320.
+  // Sur la mascotte vidéo, seuls ses pixels opaques comptent, pas son carré.
   const interactifSous = (x, y) => {
     const el = document.elementFromPoint(x, y);
     return !!(el && el.closest('[data-interactif]')) || avatar.contient(x, y);
@@ -93,9 +124,10 @@
     appliquerTextes();
     majVeilleuse(d.veilleuse);
     if (typeof d.pause === 'boolean') enPause = d.pause;
-    monterAvatar(d.mascotte || {});
+    reglagesMascotte = d.mascotte || {};
+    monterAvatar(reglagesMascotte);
     avatar.pause(enPause);
-    if (premierInit) avatar.evenement('salut'); // bonjour
+    if (premierInit) avatar.evenement('accueil'); // démarrage
     premierInit = false;
   }
   ob.init().then(recevoirInit);
@@ -213,10 +245,15 @@
     elQuestion.hidden = false; // avant fermerCarte(), sinon le survol serait relâché
     fermerCarte();
     avatar.etat('ecoute');
-    avatar.evenement('ouverture');
     elChamp.focus();
     elChamp.select();
   });
+
+  // wave à la fermeture de la bulle, au plus une fois par au_revoir_intervalle_min.
+  const auRevoirPermis = ReglesMascotte.limiteurAuRevoir();
+  function direAuRevoir() {
+    if (auRevoirPermis(reglagesMascotte)) avatar.evenement('au_revoir');
+  }
 
   function fermerQuestion() {
     if (elQuestion.hidden) return;
@@ -224,7 +261,7 @@
     elReponse.replaceChildren();
     elChamp.value = '';
     avatar.etat('repos');
-    avatar.evenement('salut'); // au revoir
+    direAuRevoir();
     ob.questionFermee();
     relacherSiMasque();
   }
@@ -252,8 +289,10 @@
     const q = elChamp.value.trim();
     if (!q) return;
     elReponse.replaceChildren(paragraphe('reponse-intro', t('recherche_en_cours')));
-    avatar.evenement('recherche');
+    // think seulement si la réponse tarde : une recherche locale répond en quelques ms.
+    const minuterieThink = setTimeout(() => avatar.evenement('recherche'), ReglesMascotte.seuilRecherche(reglagesMascotte));
     const r = await ob.rechercher(q);
+    clearTimeout(minuterieThink);
     avatar.evenement(r.etat === 'ok' ? 'article_trouve' : 'rien_trouve');
     const noeuds = [];
     if (r.etat === 'ok') {

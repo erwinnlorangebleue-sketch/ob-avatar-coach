@@ -1,5 +1,5 @@
 {
-  "_mode_d_emploi": "Réglages lus à distance par tous les postes (relus toutes les heures). veille=true masque l'avatar partout. cartes_actives / recherche_active permettent de brider une fonction. veilleuse_duree_min / veilleuse_reprise_heure : veilleuse des cartes choisie par le coach (1 h, ou jusqu'au lendemain à cette heure).",
+  "_mode_d_emploi": "Réglages lus à distance par tous les postes (relus toutes les heures). veille=true masque l'avatar partout. cartes_actives / recherche_active permettent de brider une fonction. veilleuse_duree_min / veilleuse_reprise_heure : veilleuse des cartes choisie par le coach (1 h, ou jusqu'au lendemain à cette heure). acceleration_materielle=true réactive le GPU (moins économe avec une fenêtre transparente) ; pris en compte au redémarrage du poste.",
   "veille": false,
   "cartes_actives": true,
   "recherche_active": true,
@@ -9,6 +9,7 @@
   "veilleuse_duree_min": 60,
   "veilleuse_reprise_heure": 6,
   "raccourci": "Control+Space",
+  "acceleration_materielle": false,
   "synchro_articles_heure": 3,
   "relecture_contenu_min": 60,
   "verification_maj_h": 4,

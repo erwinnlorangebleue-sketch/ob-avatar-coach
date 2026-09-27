@@ -10,6 +10,7 @@
   --bord: #d9dee8;
   --vert: #1f8a5b;
   --ambre: #b7791f;
+  --taille-mascotte: 160px; /* remplacé par taille_px de contenu/mascotte.json */
 }
 
 html,
@@ -26,11 +27,11 @@ body {
 
 /* ---------- Bulles ---------- */
 
-/* Au-dessus de la zone de la mascotte (320 px, voir avatar/mascotte.css). */
+/* Au-dessus de la mascotte (voir avatar/mascotte.css), sans toucher le haut du pédoncule. */
 .bulle {
   position: fixed;
   right: 14px;
-  bottom: 312px;
+  bottom: calc(var(--taille-mascotte) * 0.975);
   width: 360px;
   max-height: 380px;
   overflow-y: auto;

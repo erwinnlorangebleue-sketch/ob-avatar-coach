@@ -115,6 +115,10 @@
 /* Fenêtre cachée, veille, session verrouillée : plus rien ne tourne. */
 .silhouette.en-pause * { animation-play-state: paused !important; }
 
+/* Au repos, silhouette immobile : une animation permanente fait recomposer la fenêtre
+   transparente à chaque image (~21 % d'un cœur mesurés, 0,4 % immobile). Elle ne s'anime qu'hors attente. */
+.silhouette[data-etat="repos"] * { animation: none; }
+
 @media (prefers-reduced-motion: reduce) {
   .silhouette * { animation: none !important; }
 }
