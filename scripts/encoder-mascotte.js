@@ -3,8 +3,10 @@
 // dans assets/mascotte/<version>/<taille>/ (et repos.png). Outil de poste de développement :
 // il n'est pas livré dans le binaire.
 //
-//   node scripts/encoder-mascotte.js "<dossier des PNG masters>" v89 [--sortie <dossier>]
+//   node scripts/encoder-mascotte.js "<dossier des PNG masters>" v89 [--miroir] [--sortie <dossier>]
 //
+// --miroir retourne la mascotte gauche-droite (clips et repos.png) à l'encodage : rien à faire
+// à l'exécution, donc aucun coût processeur (un retournement CSS coûtait ~1 pt en lecture).
 // Le dossier des masters contient un sous-dossier par clip (idle, talk…), images 0000.png…
 // Clips et tailles viennent de contenu/mascotte.json (etats, variantes). La version active reste
 // choisie dans ce même fichier (dossier) : ce script ne le modifie pas.
@@ -193,16 +195,16 @@ function ffmpeg(args, binaire = false) {
   return r.stdout;
 }
 
-const filtre = (cote) => `scale=${cote}:${cote}:flags=lanczos,lutrgb=a='if(lt(val,${SEUIL_ALPHA}),0,val)'`;
+const filtre = (cote, miroir) => `${miroir ? 'hflip,' : ''}scale=${cote}:${cote}:flags=lanczos,lutrgb=a='if(lt(val,${SEUIL_ALPHA}),0,val)'`;
 const motif = (dossier) => path.join(dossier, '%04d.png');
 
-function encoder(dossierClip, cote, fichier) {
+function encoder(dossierClip, cote, fichier, miroir) {
   ffmpeg(['-y', '-fflags', '+bitexact', '-framerate', String(IMAGES_PAR_S), '-i', motif(dossierClip),
-    '-vf', filtre(cote), ...VP9, '-fflags', '+bitexact', '-flags:v', '+bitexact', fichier]);
+    '-vf', filtre(cote, miroir), ...VP9, '-fflags', '+bitexact', '-flags:v', '+bitexact', fichier]);
 }
 
-function alphaSource(dossierClip, cote) {
-  return ffmpeg(['-framerate', String(IMAGES_PAR_S), '-i', motif(dossierClip), '-vf', filtre(cote) + ',format=rgba,alphaextract',
+function alphaSource(dossierClip, cote, miroir) {
+  return ffmpeg(['-framerate', String(IMAGES_PAR_S), '-i', motif(dossierClip), '-vf', filtre(cote, miroir) + ',format=rgba,alphaextract',
     '-f', 'rawvideo', '-pix_fmt', 'gray', '-'], true);
 }
 
@@ -227,14 +229,15 @@ function lireReglages() {
 
 function principal(argv) {
   const libres = [];
-  let sortie = null;
+  let sortie = null, miroir = false;
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === '--sortie') sortie = argv[++i];
+    else if (argv[i] === '--miroir') miroir = true;
     else libres.push(argv[i]);
   }
   const [masters, version] = libres;
   if (!masters || !/^v\d+$/.test(version || '')) {
-    throw new Error('usage : node scripts/encoder-mascotte.js "<dossier des PNG masters>" v89 [--sortie <dossier>]');
+    throw new Error('usage : node scripts/encoder-mascotte.js "<dossier des PNG masters>" v89 [--miroir] [--sortie <dossier>]');
   }
   const { clips, attente, variantes, active } = lireReglages();
   for (const clip of clips) {
@@ -248,8 +251,8 @@ function principal(argv) {
       fs.mkdirSync(path.join(travail, String(cote)));
       for (const clip of clips) {
         const fichier = path.join(travail, String(cote), clip + '.webm');
-        encoder(path.join(masters, clip), cote, fichier);
-        const r = residuAlpha(alphaSource(path.join(masters, clip), cote), alphaDecode(fichier), cote);
+        encoder(path.join(masters, clip), cote, fichier, miroir);
+        const r = residuAlpha(alphaSource(path.join(masters, clip), cote, miroir), alphaDecode(fichier), cote);
         const fond = `${r.nonNuls} px non nuls sur ${r.pixels} (max ${r.max})`;
         if (!r.propre) erreurs.push(`${cote}/${clip} : fond ${fond}`);
         console.log(`${cote}/${clip}.webm  ${r.images} images  ${fs.statSync(fichier).size} o  fond ${r.propre ? 'propre' : 'KO'} : ${fond}`);
@@ -267,12 +270,15 @@ function principal(argv) {
       fs.rmSync(dossier, { recursive: true, force: true });
       fs.cpSync(path.join(travail, String(cote)), dossier, { recursive: true });
     }
-    // Masque de survol : la pose de repos, image 0 du clip d'attente, à la résolution du master.
-    fs.copyFileSync(path.join(masters, attente, '0000.png'), path.join(destination, 'repos.png'));
+    // Masque de survol : la pose de repos, image 0 du clip d'attente, à la résolution du master,
+    // retournée comme les clips.
+    const repos = path.join(masters, attente, '0000.png');
+    if (miroir) ffmpeg(['-y', '-i', repos, '-vf', 'hflip', '-fflags', '+bitexact', '-flags:v', '+bitexact', path.join(destination, 'repos.png')]);
+    else fs.copyFileSync(repos, path.join(destination, 'repos.png'));
   } finally {
     fs.rmSync(travail, { recursive: true, force: true });
   }
-  console.log(`\n${clips.length} clips × ${variantes.join('/')} rangés dans ${destination}`);
+  console.log(`\n${clips.length} clips × ${variantes.join('/')}${miroir ? ' (miroir)' : ''} rangés dans ${destination}`);
   if (active !== version) console.log(`Version active : ${active}. Pour passer à ${version} : "dossier": "${version}" dans contenu/mascotte.json.`);
 }
 

@@ -1,7 +1,7 @@
 {
   "_mode_d_emploi": "Mascotte animée, lue à distance comme config.json. mascotte = \"video\" (clips WebM livrés avec l'appli) ou \"silhouette\" (mode léger, sans vidéo). dossier = version active, sous-dossier de assets/mascotte/ livré dans le binaire. variantes = côtés encodés (un sous-dossier chacun) ; à l'exécution on prend la plus petite qui couvre taille_px × densité de pixels de l'écran, sinon la plus grande. taille_px = côté de la mascotte à l'écran ; la fenêtre, l'ombre et la zone de clic suivent. etats : état de l'appli → clip ; boucle=true : le clip sert de fond tant que l'état dure, sinon il est joué une fois puis on revient au fond (« attente », ou « carte » si une carte est ouverte). Un fond est joué « passages » fois de suite puis reste immobile sur la pose de repos : un temps tiré entre repos_s.min_s et max_s, puis il repart ; sans repos_s, jusqu'au changement d'état. accueil = démarrage et sortie de veille ; au_revoir = bulle fermée, au plus une fois par au_revoir_intervalle_min ; recherche = seulement si la réponse tarde plus de recherche_seuil_ms ; designer = survol de la carte ou d'un article trouvé.",
-  "mascotte": "silhouette",
-  "dossier": "v88",
+  "mascotte": "video",
+  "dossier": "v89",
   "variantes": [320, 640],
   "taille_px": 160,
   "au_revoir_intervalle_min": 10,
