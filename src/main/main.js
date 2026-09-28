@@ -14,6 +14,7 @@ const R = require('./recherche');
 const fenetreActive = require('./fenetre-active');
 const veilleuse = require('./veilleuse');
 const { creerReleveProcesseur } = require('./processeur');
+const { dossiersEmbarques, resoudreDossier } = require('./mascotte-dossier');
 
 // La fenêtre épouse ce que la page affiche (IPC « taille »), ancrée en bas à droite :
 // jamais plus grande que la mascotte, ou que la mascotte et sa bulle quand elle est ouverte.
@@ -23,6 +24,7 @@ const LARGEUR_MAX = 400;
 const PAS_MINUTERIE_S = 5;
 const PAS_RELEVE_PROCESSEUR_S = 30;
 const DELAI_RESEAU_MS = 20000;
+const RACINE_MASCOTTE = path.join(__dirname, '..', '..', 'assets', 'mascotte');
 const ORIGINE_CENTRE_AIDE = 'https://support.lorangebleue.fr';
 
 if (!app.requestSingleInstanceLock()) {
@@ -89,10 +91,14 @@ let indexArticles = centreAide.lire();
 function appliquerContenu() {
   const brut = contenu.charger();
   const { cartes, ecartees } = construireCartes(brut.index, brut.md, brut.config.categories_affichables || []);
+  const mascotte = resoudreDossier(brut.mascotte, dossiersEmbarques(RACINE_MASCOTTE, brut.mascotte));
+  if (mascotte.repli) {
+    journal.info(`mascotte : dossier ${mascotte.repli.demande} absent du binaire, repli sur ${mascotte.repli.retenu}`);
+  }
   etat = {
     config: brut.config,
     textes: brut.textes,
-    mascotte: brut.mascotte,
+    mascotte: mascotte.reglages,
     cartes,
     piocher: creerPioche(cartes),
     regles: R.preparerSynonymes(brut.synonymes),
