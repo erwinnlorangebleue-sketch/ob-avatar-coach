@@ -1,5 +1,5 @@
 {
-  "_mode_d_emploi": "Réglages lus à distance par tous les postes (relus toutes les heures). veille=true masque l'avatar partout. cartes_actives / recherche_active permettent de brider une fonction. veilleuse_duree_min / veilleuse_reprise_heure : veilleuse des cartes choisie par le coach (1 h, ou jusqu'au lendemain à cette heure). acceleration_materielle=true réactive le GPU (moins économe avec une fenêtre transparente) ; pris en compte au redémarrage du poste.",
+  "_mode_d_emploi": "Réglages lus à distance par tous les postes (relus toutes les heures). veille=true masque l'avatar partout. cartes_actives / recherche_active permettent de brider une fonction. veilleuse_duree_min / veilleuse_reprise_heure : veilleuse des cartes choisie par le coach (1 h, ou jusqu'au lendemain à cette heure). acceleration_materielle=true réactive le GPU (moins économe avec une fenêtre transparente) ; pris en compte au redémarrage du poste. relecture_contenu_min / verification_maj_min : intervalle des vérifications du contenu et du binaire, relu à chaque cycle. fermeture_bulle_min : bulle de question fermée après ce temps sans interaction.",
   "veille": false,
   "cartes_actives": true,
   "recherche_active": true,
@@ -12,7 +12,8 @@
   "acceleration_materielle": false,
   "synchro_articles_heure": 3,
   "relecture_contenu_min": 60,
-  "verification_maj_h": 4,
+  "verification_maj_min": 60,
+  "fermeture_bulle_min": 10,
   "resultats_max": 3,
   "score_minimum": 5,
   "couverture_minimum": 0.5,

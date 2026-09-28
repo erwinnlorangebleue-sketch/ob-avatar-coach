@@ -34,7 +34,16 @@ function creerJournal(dossier, version) {
     return etat;
   }
 
+  // Nouvelle version installée : les moyennes processeur de l'ancienne ne la décrivent pas.
+  const precedent = lireEtat();
+  const versionPrecedente = precedent.version && precedent.version !== version ? precedent.version : null;
+  if (versionPrecedente && precedent.processeur) {
+    delete precedent.processeur;
+    try { fs.writeFileSync(fichierEtat, JSON.stringify(precedent, null, 2)); } catch (_) {}
+  }
+
   return {
+    versionPrecedente,
     info: (m) => ecrire('info', m),
     erreur(m) {
       ecrire('erreur', m);

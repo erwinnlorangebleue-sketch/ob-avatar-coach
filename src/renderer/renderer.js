@@ -294,6 +294,15 @@
     relacherSiMasque();
   }
   ob.surFermerQuestion(fermerQuestion);
+  // Frappe ou clic dans la bulle : le processus principal ne la ferme pas tant qu'on s'en sert.
+  let derniereInteractionSignalee = 0;
+  for (const type of ['keydown', 'pointerdown']) {
+    elQuestion.addEventListener(type, () => {
+      if (Date.now() - derniereInteractionSignalee < 5000) return;
+      derniereInteractionSignalee = Date.now();
+      ob.interaction();
+    });
+  }
   elQuestion.querySelector('.bulle-fermer').addEventListener('click', fermerQuestion);
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') fermerQuestion();

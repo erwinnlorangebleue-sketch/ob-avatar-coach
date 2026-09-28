@@ -15,6 +15,9 @@ const fenetreActive = require('./fenetre-active');
 const veilleuse = require('./veilleuse');
 const { creerReleveProcesseur } = require('./processeur');
 const { dossiersEmbarques, resoudreDossier } = require('./mascotte-dossier');
+const { creerVerification } = require('./verification');
+const { bulleExpiree, installationPermise } = require('./bulle');
+const { identiteDev } = require('./identite');
 
 // La fenêtre épouse ce que la page affiche (IPC « taille »), ancrée en bas à droite :
 // jamais plus grande que la mascotte, ou que la mascotte et sa bulle quand elle est ouverte.
@@ -27,6 +30,12 @@ const DELAI_RESEAU_MS = 20000;
 const RACINE_MASCOTTE = path.join(__dirname, '..', '..', 'assets', 'mascotte');
 const ORIGINE_CENTRE_AIDE = 'https://support.lorangebleue.fr';
 
+if (!app.isPackaged) {
+  const dev = identiteDev(app.getPath('appData'));
+  app.setName(dev.nom);
+  app.setPath('userData', dev.userData);
+}
+
 if (!app.requestSingleInstanceLock()) {
   app.quit();
   process.exit(0);
@@ -34,9 +43,13 @@ if (!app.requestSingleInstanceLock()) {
 
 const dossierDonnees = app.getPath('userData');
 const journal = creerJournal(dossierDonnees, app.getVersion());
+if (journal.versionPrecedente) {
+  journal.info(`nouvelle version ${journal.versionPrecedente} → ${app.getVersion()} : moyennes processeur remises à zéro`);
+}
 
 let fenetre = null;
 let questionOuverte = false;
+let derniereInteraction = 0; // dernière frappe ou clic dans la bulle, ou son ouverture
 let fenetrePrecedente = null; // application qui avait le clavier avant la bulle
 let raccourciEnregistre = null;
 let secondesActives = 0;
@@ -263,6 +276,7 @@ function ouvrirQuestion() {
   if (!fenetre || etat.config.veille) return;
   if (!questionOuverte) memoriserFenetrePrecedente();
   questionOuverte = true;
+  derniereInteraction = Date.now();
   fenetre.showInactive();
   fenetre.setAlwaysOnTop(true, 'screen-saver');
   fenetre.moveTop();
@@ -334,6 +348,7 @@ ipcMain.on('taille', (_, largeur, hauteur) => {
 });
 ipcMain.on('veilleuse', (_, mode) => reglerVeilleuse(veilleuse.MODES.includes(mode) ? mode : null));
 ipcMain.on('question-fermee', () => fermerQuestion());
+ipcMain.on('interaction', () => { derniereInteraction = Date.now(); });
 // Mode réellement affiché (vidéo ou silhouette) et, s'il y en a une, la panne qui l'a imposé.
 ipcMain.on('mascotte', (_, m) => {
   const mode = m && m.mode === 'video' ? 'video' : 'silhouette';
@@ -401,8 +416,19 @@ function reaffirmerPremierPlan() {
   fenetre.moveTop();
 }
 
+// Bulle oubliée ouverte : fermée après fermeture_bulle_min sans interaction.
+function fermerBulleOubliee() {
+  const minutes = etat.config.fermeture_bulle_min;
+  if (!fenetre || !bulleExpiree({ ouverte: questionOuverte, derniereInteraction, maintenant: Date.now(), minutes })) return;
+  questionOuverte = false;
+  fenetre.webContents.send('fermer-question');
+  journal.info('bulle fermée : aucune interaction depuis ' + Math.round((Date.now() - derniereInteraction) / 60000) + ' min');
+}
+
 function tickActivite() {
   reaffirmerPremierPlan();
+  fermerBulleOubliee();
+  for (const v of verifications) v.rattraper();
   const c = etat.config;
   if (veilleuseJusqua && !veilleuseEnCours()) reglerVeilleuse(null); // échéance passée
   if (c.veille || !c.cartes_actives || veilleuseJusqua || !fenetre) return;
@@ -414,14 +440,14 @@ function tickActivite() {
   }
 }
 
+// Résultat écrit dans la ligne de journal de la vérification.
 async function synchroniserContenu() {
   // En développement, on travaille sur les fichiers locaux : la copie distante les masquerait.
-  if (!app.isPackaged && !process.env.OB_CONTENU_DISTANT) return;
-  const { modifies } = await contenu.synchroniser();
-  if (modifies > 0) {
-    journal.info(`${modifies} fichier(s) de contenu mis à jour à distance`);
-    appliquerContenu();
-  }
+  if (!app.isPackaged && !process.env.OB_CONTENU_DISTANT) return 'ignorée (développement)';
+  const { modifies, erreurs } = await contenu.synchroniser();
+  if (modifies > 0) appliquerContenu();
+  const resultat = modifies > 0 ? `${modifies} fichier(s) mis à jour` : 'aucun changement';
+  return erreurs > 0 ? `${resultat}, ${erreurs} fichier(s) injoignable(s)` : resultat;
 }
 
 async function synchroniserArticles() {
@@ -449,9 +475,19 @@ function verifierSynchroArticles() {
 
 // ---------- Mise à jour automatique ----------
 
-function demarrerMisesAJour() {
+let autoUpdater = null;
+
+async function verifierBinaire() {
+  if (!autoUpdater) return 'ignorée (développement)';
+  const r = await autoUpdater.checkForUpdates();
+  const v = r && r.updateInfo && r.updateInfo.version;
+  if (r && r.isUpdateAvailable) return `version ${v} disponible (installée : ${app.getVersion()})`;
+  return `à jour (${app.getVersion()})`;
+}
+
+function preparerMisesAJour() {
   if (!app.isPackaged) return;
-  const { autoUpdater } = require('electron-updater');
+  ({ autoUpdater } = require('electron-updater'));
   autoUpdater.logger = {
     info: (m) => journal.info('maj : ' + m),
     warn: (m) => journal.info('maj (avertissement) : ' + m),
@@ -465,17 +501,30 @@ function demarrerMisesAJour() {
     journal.info('mise à jour téléchargée : ' + info.version);
   });
   autoUpdater.on('error', (e) => journal.erreur('maj : ' + (e && e.message)));
-  const verifier = () => autoUpdater.checkForUpdates().catch((e) => journal.erreur('maj : ' + e.message));
-  verifier();
-  setInterval(verifier, (etat.config.verification_maj_h || 4) * 3600000);
   // Les postes ne sont presque jamais redémarrés : on installe dès que personne ne s'en sert.
   setInterval(() => {
-    if (majPrete && !questionOuverte && powerMonitor.getSystemIdleTime() > 300) {
+    if (installationPermise({ majPrete, questionOuverte, inactifS: powerMonitor.getSystemIdleTime() })) {
       journal.info('installation de la mise à jour (poste inactif)');
       autoUpdater.quitAndInstall(true, true);
     }
   }, 60000);
 }
+
+// Contenu et binaire : au démarrage, à la sortie de veille, puis selon la config relue à chaque cycle.
+const verifications = [
+  creerVerification({
+    cible: 'contenu',
+    action: synchroniserContenu,
+    intervalleMs: () => (etat.config.relecture_contenu_min || 60) * 60000,
+    journal,
+  }),
+  creerVerification({
+    cible: 'binaire',
+    action: verifierBinaire,
+    intervalleMs: () => (etat.config.verification_maj_min || 60) * 60000,
+    journal,
+  }),
+];
 
 // ---------- Démarrage ----------
 
@@ -486,18 +535,21 @@ app.whenReady().then(() => {
   if (app.isPackaged) app.setLoginItemSettings({ openAtLogin: true });
   creerFenetre();
   powerMonitor.on('suspend', () => surHorsService('veille', true));
-  powerMonitor.on('resume', () => surHorsService('veille', false));
+  powerMonitor.on('resume', () => {
+    surHorsService('veille', false);
+    for (const v of verifications) v.lancer('sortie de veille');
+  });
   powerMonitor.on('lock-screen', () => surHorsService('verrou', true));
   powerMonitor.on('unlock-screen', () => surHorsService('verrou', false));
 
   setInterval(tickActivite, PAS_MINUTERIE_S * 1000);
   setInterval(() => releveProcesseur.echantillon(), PAS_RELEVE_PROCESSEUR_S * 1000);
-  synchroniserContenu().finally(() => {
+  preparerMisesAJour();
+  verifications[0].lancer('démarrage').finally(() => {
     if (heuresDepuisSynchro() > 20) synchroniserArticles();
   });
-  setInterval(synchroniserContenu, (etat.config.relecture_contenu_min || 60) * 60000);
+  verifications[1].lancer('démarrage');
   setInterval(verifierSynchroArticles, 30 * 60000);
-  demarrerMisesAJour();
 });
 
 app.on('second-instance', () => ouvrirQuestion());

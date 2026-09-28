@@ -8,6 +8,7 @@ contextBridge.exposeInMainWorld('ob', {
   demanderQuestion: () => ipcRenderer.send('demander-question'),
   taille: (largeur, hauteur) => ipcRenderer.send('taille', Number(largeur), Number(hauteur)),
   questionFermee: () => ipcRenderer.send('question-fermee'),
+  interaction: () => ipcRenderer.send('interaction'),
   rechercher: (q) => ipcRenderer.invoke('rechercher', String(q)),
   ouvrirArticle: (url) => ipcRenderer.send('ouvrir-article', String(url)),
   veilleuse: (mode) => ipcRenderer.send('veilleuse', String(mode)),
